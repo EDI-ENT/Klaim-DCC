@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -175,6 +176,80 @@
 
   .readonly-item span.empty { color: var(--text-muted); font-style: italic; font-weight: 400; }
 
+  /* ── Autocomplete ── */
+  .autocomplete-wrap { position: relative; }
+
+  .autocomplete-wrap input {
+    width: 100%;
+    padding: 9px 36px 9px 12px;
+    font-size: 14px;
+    font-family: inherit;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+
+  .autocomplete-wrap input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    background: #fff;
+  }
+
+  .autocomplete-wrap .ac-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--text-muted);
+  }
+
+  .ac-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  }
+
+  .ac-dropdown.open { display: block; }
+
+  .ac-item {
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.1s;
+    color: var(--text);
+  }
+
+  .ac-item:last-child { border-bottom: none; }
+  .ac-item:hover, .ac-item.active { background: var(--primary-light); color: var(--primary-dark); }
+
+  .ac-item mark {
+    background: none;
+    color: var(--primary);
+    font-weight: 600;
+  }
+
+  .ac-empty {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ── Upload ── */
   .upload-area {
     border: 2px dashed var(--border);
     border-radius: var(--radius);
@@ -203,6 +278,7 @@
     display: none;
   }
 
+  /* ── Button ── */
   .btn-submit {
     width: 100%;
     padding: 13px;
@@ -236,6 +312,7 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  /* ── Toast ── */
   .toast {
     position: fixed;
     bottom: 24px;
@@ -260,6 +337,7 @@
   .toast.success { background: var(--success); }
   .toast.error { background: var(--error); }
 
+  /* ── Success ── */
   .success-screen {
     display: none;
     text-align: center;
@@ -294,6 +372,7 @@
 
   .btn-new:hover { background: #d4e3fd; }
 
+  /* ── Loading ── */
   .loading-users {
     font-size: 13px;
     color: var(--text-muted);
@@ -341,13 +420,29 @@
       <div class="card-title">Data user</div>
       <div class="field" style="margin-bottom: 16px;">
         <label>Nama user <span>*</span></label>
+
+        <!-- Loading state -->
         <div id="user-loading" class="loading-users">
           <div class="dot-loader"><span></span><span></span><span></span></div>
           Memuat data user...
         </div>
-        <select id="namaUser" style="display:none;" onchange="fillUserData()">
-          <option value="">-- Pilih nama user --</option>
-        </select>
+
+        <!-- Autocomplete -->
+        <div class="autocomplete-wrap" id="ac-wrap" style="display:none;">
+          <input
+            type="text"
+            id="namaUserInput"
+            placeholder="Ketik nama user..."
+            autocomplete="off"
+            oninput="onAcInput()"
+            onfocus="onAcFocus()"
+          >
+          <svg class="ac-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <div class="ac-dropdown" id="ac-dropdown"></div>
+        </div>
+
+        <!-- Hidden value for submit -->
+        <input type="hidden" id="namaUser">
       </div>
 
       <div class="readonly-group" id="user-detail">
@@ -401,7 +496,7 @@
         <label>Kategori <span>*</span></label>
         <select id="kategori">
           <option value="">-- Pilih kategori --</option>
-          <option>Makan & Minum</option>
+          <option>Makan &amp; Minum</option>
           <option>Transportasi</option>
           <option>Akomodasi</option>
           <option>Hiburan</option>
@@ -444,7 +539,7 @@
       <div class="upload-area" id="uploadArea">
         <input type="file" id="fotoInput" accept="image/*" onchange="previewFoto(event)">
         <div class="upload-icon">📎</div>
-        <div class="upload-text"><strong>Klik untuk upload</strong> atau drag & drop foto di sini</div>
+        <div class="upload-text"><strong>Klik untuk upload</strong> atau drag &amp; drop foto di sini</div>
         <div class="upload-text" style="margin-top:4px; font-size:12px;">JPG, PNG, HEIC — maks. 5MB</div>
         <img id="fotoPreview" class="preview-img">
       </div>
@@ -476,34 +571,121 @@ let usersData = [];
 let fotoBase64 = '';
 let fotoName = '';
 let fotoMime = '';
+let acActiveIndex = -1;
 
-// Set tanggal hari ini
+// Set tanggal & bulan default
 document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
 const bulanNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 document.getElementById('bulan').value = bulanNames[new Date().getMonth()];
 
-// Load users dari Apps Script
+// ── Load users ──
 async function loadUsers() {
   try {
     const res = await fetch(API_URL + '?action=getUsers');
     const data = await res.json();
     usersData = data;
-    const sel = document.getElementById('namaUser');
-    data.forEach(u => {
-      const opt = document.createElement('option');
-      opt.value = u.namaUser;
-      opt.textContent = u.namaUser;
-      sel.appendChild(opt);
-    });
     document.getElementById('user-loading').style.display = 'none';
-    sel.style.display = 'block';
+    document.getElementById('ac-wrap').style.display = 'block';
   } catch(err) {
     document.getElementById('user-loading').innerHTML = '<span style="color:#dc2626">Gagal memuat data user. Cek koneksi & Apps Script.</span>';
   }
 }
 
-function fillUserData() {
-  const nama = document.getElementById('namaUser').value;
+// ── Autocomplete logic ──
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function renderDropdown(filtered, query) {
+  const dd = document.getElementById('ac-dropdown');
+  acActiveIndex = -1;
+  if (filtered.length === 0) {
+    dd.innerHTML = '<div class="ac-empty">Tidak ada hasil ditemukan</div>';
+  } else {
+    dd.innerHTML = filtered.map((u, i) =>
+      `<div class="ac-item" data-index="${i}" data-name="${u.namaUser.replace(/"/g,'&quot;')}"
+        onmousedown="selectUser(event, '${u.namaUser.replace(/'/g,"\\'")}')">
+        ${highlight(u.namaUser, query)}
+      </div>`
+    ).join('');
+  }
+  dd.classList.add('open');
+}
+
+function onAcInput() {
+  const q = document.getElementById('namaUserInput').value.trim();
+  // clear selected if user edits
+  document.getElementById('namaUser').value = '';
+  clearUserDetail();
+
+  if (q.length === 0) {
+    renderDropdown(usersData, '');
+    return;
+  }
+  const filtered = usersData.filter(u => u.namaUser.toLowerCase().includes(q.toLowerCase()));
+  renderDropdown(filtered, q);
+}
+
+function onAcFocus() {
+  const q = document.getElementById('namaUserInput').value.trim();
+  const filtered = q
+    ? usersData.filter(u => u.namaUser.toLowerCase().includes(q.toLowerCase()))
+    : usersData;
+  renderDropdown(filtered, q);
+}
+
+function selectUser(event, nama) {
+  event.preventDefault();
+  document.getElementById('namaUserInput').value = nama;
+  document.getElementById('namaUser').value = nama;
+  document.getElementById('ac-dropdown').classList.remove('open');
+  fillUserData(nama);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  const wrap = document.getElementById('ac-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('ac-dropdown').classList.remove('open');
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  const dd = document.getElementById('ac-dropdown');
+  if (!dd.classList.contains('open')) return;
+  const items = dd.querySelectorAll('.ac-item');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    acActiveIndex = Math.min(acActiveIndex + 1, items.length - 1);
+    updateActiveItem(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    acActiveIndex = Math.max(acActiveIndex - 1, 0);
+    updateActiveItem(items);
+  } else if (e.key === 'Enter' && acActiveIndex >= 0) {
+    e.preventDefault();
+    const nama = items[acActiveIndex].dataset.name;
+    document.getElementById('namaUserInput').value = nama;
+    document.getElementById('namaUser').value = nama;
+    dd.classList.remove('open');
+    fillUserData(nama);
+  } else if (e.key === 'Escape') {
+    dd.classList.remove('open');
+  }
+});
+
+function updateActiveItem(items) {
+  items.forEach((el, i) => {
+    el.classList.toggle('active', i === acActiveIndex);
+    if (i === acActiveIndex) el.scrollIntoView({ block: 'nearest' });
+  });
+}
+
+// ── Fill user detail ──
+function fillUserData(nama) {
   const user = usersData.find(u => u.namaUser === nama);
   const fields = ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'];
   if (user) {
@@ -513,14 +695,19 @@ function fillUserData() {
       el.className = user[f] ? '' : 'empty';
     });
   } else {
-    fields.forEach(f => {
-      const el = document.getElementById('val-' + f);
-      el.textContent = '—';
-      el.className = 'empty';
-    });
+    clearUserDetail();
   }
 }
 
+function clearUserDetail() {
+  ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'].forEach(f => {
+    const el = document.getElementById('val-' + f);
+    el.textContent = '—';
+    el.className = 'empty';
+  });
+}
+
+// ── Photo ──
 function previewFoto(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -537,6 +724,7 @@ function previewFoto(e) {
   reader.readAsDataURL(file);
 }
 
+// ── Toast ──
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -544,6 +732,7 @@ function showToast(msg, type = '') {
   setTimeout(() => t.className = 'toast', 3000);
 }
 
+// ── Validation ──
 function validate() {
   const required = [
     { id: 'namaUser', label: 'Nama User' },
@@ -555,15 +744,18 @@ function validate() {
     { id: 'tujuanEntertain', label: 'Tujuan Entertain' },
   ];
   for (const f of required) {
-    if (!document.getElementById(f.id).value.trim()) {
+    const val = document.getElementById(f.id).value.trim();
+    if (!val) {
       showToast(f.label + ' wajib diisi', 'error');
-      document.getElementById(f.id).focus();
+      if (f.id === 'namaUser') document.getElementById('namaUserInput').focus();
+      else document.getElementById(f.id).focus();
       return false;
     }
   }
   return true;
 }
 
+// ── Submit ──
 async function submitForm() {
   if (!validate()) return;
   const btn = document.getElementById('btnSubmit');
@@ -577,24 +769,24 @@ async function submitForm() {
   const user = usersData.find(u => u.namaUser === nama) || {};
 
   const payload = {
-    namaUser      : nama,
-    idUser        : user.idUser || '',
-    spesialis     : user.spesialis || '',
-    namaKlinik    : user.namaKlinik || '',
-    posisi        : user.posisi || '',
-    noKontak      : user.noKontak || '',
-    districtArea  : user.districtArea || '',
-    tanggal       : document.getElementById('tanggal').value,
-    bulan         : document.getElementById('bulan').value,
-    kategori      : document.getElementById('kategori').value,
-    nominal       : document.getElementById('nominal').value,
-    averageSales  : document.getElementById('averageSales').value,
+    namaUser        : nama,
+    idUser          : user.idUser || '',
+    spesialis       : user.spesialis || '',
+    namaKlinik      : user.namaKlinik || '',
+    posisi          : user.posisi || '',
+    noKontak        : user.noKontak || '',
+    districtArea    : user.districtArea || '',
+    tanggal         : document.getElementById('tanggal').value,
+    bulan           : document.getElementById('bulan').value,
+    kategori        : document.getElementById('kategori').value,
+    nominal         : document.getElementById('nominal').value,
+    averageSales    : document.getElementById('averageSales').value,
     tempatEntertain : document.getElementById('tempatEntertain').value,
     alamatEntertain : document.getElementById('alamatEntertain').value,
     tujuanEntertain : document.getElementById('tujuanEntertain').value,
-    foto          : fotoBase64,
-    fotoName      : fotoName,
-    fotoMime      : fotoMime
+    foto            : fotoBase64,
+    fotoName        : fotoName,
+    fotoMime        : fotoMime
   };
 
   try {
@@ -618,11 +810,13 @@ async function submitForm() {
   }
 }
 
+// ── Reset ──
 function resetForm() {
   document.getElementById('form-area').style.display = 'block';
   document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('namaUserInput').value = '';
   document.getElementById('namaUser').value = '';
-  fillUserData();
+  clearUserDetail();
   ['tanggal','bulan','kategori','nominal','averageSales','tempatEntertain','alamatEntertain','tujuanEntertain'].forEach(id => {
     document.getElementById(id).value = '';
   });
