@@ -448,27 +448,30 @@
       <div class="readonly-group" id="user-detail">
         <div class="readonly-item">
           <label>ID User</label>
-          <span id="val-idUser" class="empty">—</span>
+          <input type="text" id="val-idUser" placeholder="—" style="background:#fff; border:1px solid #c7d7f9; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:500; width:100%; font-family:inherit; outline:none; color:var(--text);">
         </div>
         <div class="readonly-item">
           <label>Spesialis</label>
-          <span id="val-spesialis" class="empty">—</span>
+          <input type="text" id="val-spesialis" placeholder="—" style="background:#fff; border:1px solid #c7d7f9; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:500; width:100%; font-family:inherit; outline:none; color:var(--text);">
         </div>
         <div class="readonly-item">
           <label>Nama Klinik</label>
-          <span id="val-namaKlinik" class="empty">—</span>
+          <input type="text" id="val-namaKlinik" placeholder="—" style="background:#fff; border:1px solid #c7d7f9; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:500; width:100%; font-family:inherit; outline:none; color:var(--text);">
         </div>
         <div class="readonly-item">
           <label>Posisi</label>
-          <span id="val-posisi" class="empty">—</span>
+          <input type="text" id="val-posisi" placeholder="—" style="background:#fff; border:1px solid #c7d7f9; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:500; width:100%; font-family:inherit; outline:none; color:var(--text);">
         </div>
         <div class="readonly-item">
           <label>No Kontak</label>
-          <span id="val-noKontak" class="empty">—</span>
+          <input type="tel" id="val-noKontak" placeholder="—"
+            style="background:#fff; border:1px solid #c7d7f9; border-radius:6px;
+            padding:5px 10px; font-size:13px; font-weight:500; width:100%;
+            font-family:inherit; outline:none; color:var(--text);">
         </div>
         <div class="readonly-item">
           <label>District / Area</label>
-          <span id="val-districtArea" class="empty">—</span>
+          <input type="text" id="val-districtArea" placeholder="—" style="background:#fff; border:1px solid #c7d7f9; border-radius:6px; padding:5px 10px; font-size:13px; font-weight:500; width:100%; font-family:inherit; outline:none; color:var(--text);">
         </div>
       </div>
     </div>
@@ -496,12 +499,9 @@
         <label>Kategori <span>*</span></label>
         <select id="kategori">
           <option value="">-- Pilih kategori --</option>
-          <option>Makan &amp; Minum</option>
-          <option>Transportasi</option>
-          <option>Akomodasi</option>
-          <option>Hiburan</option>
-          <option>Souvenir / Gift</option>
-          <option>Lainnya</option>
+          <option>Pernikahan</option>
+          <option>Kedukaan</option>
+          <option>Kelahiran</option>
         </select>
       </div>
       <div class="grid-2" style="margin-bottom:14px;">
@@ -510,7 +510,7 @@
           <input type="number" id="nominal" placeholder="0" min="0">
         </div>
         <div class="field">
-          <label>Average Sales / Bulan (Rp)</label>
+          <label>Average Sales / Bulan (Rp) <span>*</span></label>
           <input type="number" id="averageSales" placeholder="0" min="0">
         </div>
       </div>
@@ -524,7 +524,7 @@
         <input type="text" id="tempatEntertain" placeholder="Nama restoran / tempat">
       </div>
       <div class="field" style="margin-bottom:14px;">
-        <label>Alamat entertain</label>
+        <label>Alamat entertain <span>*</span></label>
         <input type="text" id="alamatEntertain" placeholder="Alamat lengkap tempat entertain">
       </div>
       <div class="field">
@@ -618,6 +618,7 @@ function onAcInput() {
   const q = document.getElementById('namaUserInput').value.trim();
   // clear selected if user edits
   document.getElementById('namaUser').value = '';
+  document.getElementById('val-noKontak').value = '';
   clearUserDetail();
 
   if (q.length === 0) {
@@ -690,9 +691,7 @@ function fillUserData(nama) {
   const fields = ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'];
   if (user) {
     fields.forEach(f => {
-      const el = document.getElementById('val-' + f);
-      el.textContent = user[f] || '—';
-      el.className = user[f] ? '' : 'empty';
+      document.getElementById('val-' + f).value = user[f] || '';
     });
   } else {
     clearUserDetail();
@@ -701,9 +700,7 @@ function fillUserData(nama) {
 
 function clearUserDetail() {
   ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'].forEach(f => {
-    const el = document.getElementById('val-' + f);
-    el.textContent = '—';
-    el.className = 'empty';
+    document.getElementById('val-' + f).value = '';
   });
 }
 
@@ -735,12 +732,20 @@ function showToast(msg, type = '') {
 // ── Validation ──
 function validate() {
   const required = [
-    { id: 'namaUser', label: 'Nama User' },
-    { id: 'tanggal', label: 'Tanggal' },
-    { id: 'bulan', label: 'Bulan' },
-    { id: 'kategori', label: 'Kategori' },
-    { id: 'nominal', label: 'Nominal' },
+    { id: 'namaUser',        label: 'Nama User' },
+    { id: 'val-idUser',      label: 'ID User' },
+    { id: 'val-spesialis',   label: 'Spesialis' },
+    { id: 'val-namaKlinik',  label: 'Nama Klinik' },
+    { id: 'val-posisi',      label: 'Posisi' },
+    { id: 'val-noKontak',    label: 'No Kontak' },
+    { id: 'val-districtArea',label: 'District / Area' },
+    { id: 'tanggal',         label: 'Tanggal' },
+    { id: 'bulan',           label: 'Bulan' },
+    { id: 'kategori',        label: 'Kategori' },
+    { id: 'nominal',         label: 'Nominal' },
+    { id: 'averageSales',    label: 'Average Sales' },
     { id: 'tempatEntertain', label: 'Tempat Entertain' },
+    { id: 'alamatEntertain', label: 'Alamat Entertain' },
     { id: 'tujuanEntertain', label: 'Tujuan Entertain' },
   ];
   for (const f of required) {
@@ -751,6 +756,12 @@ function validate() {
       else document.getElementById(f.id).focus();
       return false;
     }
+  }
+  // Validasi foto
+  if (!fotoBase64) {
+    showToast('Bukti foto wajib diupload', 'error');
+    document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth' });
+    return false;
   }
   return true;
 }
@@ -770,12 +781,12 @@ async function submitForm() {
 
   const payload = {
     namaUser        : nama,
-    idUser          : user.idUser || '',
-    spesialis       : user.spesialis || '',
-    namaKlinik      : user.namaKlinik || '',
-    posisi          : user.posisi || '',
-    noKontak        : user.noKontak || '',
-    districtArea    : user.districtArea || '',
+    idUser          : document.getElementById('val-idUser').value || '',
+    spesialis       : document.getElementById('val-spesialis').value || '',
+    namaKlinik      : document.getElementById('val-namaKlinik').value || '',
+    posisi          : document.getElementById('val-posisi').value || '',
+    noKontak        : document.getElementById('val-noKontak').value || user.noKontak || '',
+    districtArea    : document.getElementById('val-districtArea').value || '',
     tanggal         : document.getElementById('tanggal').value,
     bulan           : document.getElementById('bulan').value,
     kategori        : document.getElementById('kategori').value,
@@ -816,6 +827,7 @@ function resetForm() {
   document.getElementById('success-screen').style.display = 'none';
   document.getElementById('namaUserInput').value = '';
   document.getElementById('namaUser').value = '';
+  document.getElementById('val-noKontak').value = '';
   clearUserDetail();
   ['tanggal','bulan','kategori','nominal','averageSales','tempatEntertain','alamatEntertain','tujuanEntertain'].forEach(id => {
     document.getElementById(id).value = '';
