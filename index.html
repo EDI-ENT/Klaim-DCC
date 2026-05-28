@@ -744,8 +744,8 @@ function validate() {
     { id: 'tanggal',         label: 'Tanggal' },
     { id: 'bulan',           label: 'Bulan' },
     { id: 'kategori',        label: 'Kategori' },
-    { id: 'nominal',         label: 'Nominal' },
-    { id: 'averageSales',    label: 'Average Sales' },
+    { id: 'nominal-val',      label: 'Nominal' },
+    { id: 'averageSales-val', label: 'Average Sales' },
     { id: 'tempatEntertain', label: 'Tempat Entertain' },
     { id: 'alamatEntertain', label: 'Alamat Entertain' },
     { id: 'tujuanEntertain', label: 'Tujuan Entertain' },
@@ -792,8 +792,8 @@ async function submitForm() {
     tanggal         : document.getElementById('tanggal').value,
     bulan           : document.getElementById('bulan').value,
     kategori        : document.getElementById('kategori').value,
-    nominal         : document.getElementById('nominal').value,
-    averageSales    : document.getElementById('averageSales').value,
+    nominal         : document.getElementById('nominal-val').value,
+    averageSales    : document.getElementById('averageSales-val').value,
     tempatEntertain : document.getElementById('tempatEntertain').value,
     alamatEntertain : document.getElementById('alamatEntertain').value,
     tujuanEntertain : document.getElementById('tujuanEntertain').value,
@@ -830,8 +830,12 @@ function resetForm() {
   document.getElementById('namaUserInput').value = '';
   document.getElementById('namaUser').value = '';
   document.getElementById('val-noKontak').value = '';
+  document.getElementById('nominal').value = '';
+  document.getElementById('averageSales').value = '';
+  document.getElementById('nominal-val').value = '';
+  document.getElementById('averageSales-val').value = '';
   clearUserDetail();
-  ['tanggal','bulan','kategori','nominal','averageSales','tempatEntertain','alamatEntertain','tujuanEntertain'].forEach(id => {
+  ['tanggal','bulan','kategori','tempatEntertain','alamatEntertain','tujuanEntertain'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
@@ -839,7 +843,15 @@ function resetForm() {
   document.getElementById('fotoPreview').style.display = 'none';
   fotoBase64 = ''; fotoName = ''; fotoMime = '';
 }
-
+  // Format akunting
+function formatAkunting(input, hiddenId) {
+  // Ambil hanya angka
+  const raw = input.value.replace(/\D/g, '');
+  // Simpan nilai asli ke hidden input
+  document.getElementById(hiddenId).value = raw;
+  // Format dengan titik sebagai separator ribuan
+  input.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
+}
 loadUsers();
 </script>
 </body>
