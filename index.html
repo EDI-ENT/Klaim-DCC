@@ -507,13 +507,15 @@
         </select>
       </div>
       <div class="grid-2" style="margin-bottom:14px;">
-        <div class="field">
-          <label>Nominal (Rp) <span>*</span></label>
-          <input type="number" id="nominal" placeholder="0" min="0">
-        </div>
-        <div class="field">
-          <label>Average Sales / Bulan (Rp) <span>*</span></label>
-          <input type="number" id="averageSales" placeholder="0" min="0">
+      <div class="field">
+      <label>Nominal (Rp) <span>*</span></label>
+      <input type="text" id="nominal" placeholder="0" inputmode="numeric" oninput="formatAkunting(this, 'nominal-val')">
+      <input type="hidden" id="nominal-val">
+      </div>
+      <div class="field">
+      <label>Average Sales / Bulan (Rp) <span>*</span></label>
+      <input type="text" id="averageSales" placeholder="0" inputmode="numeric" oninput="formatAkunting(this, 'averageSales-val')">
+      <input type="hidden" id="averageSales-val">
         </div>
       </div>
     </div>
