@@ -590,11 +590,11 @@
         <div class="readonly-group">
           <div class="readonly-item">
             <label>ID User</label>
-            <input type="text" id="val-idUser" placeholder="—">
+            <input type="text" id="val-idUser" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
           </div>
           <div class="readonly-item">
             <label>Spesialis</label>
-            <input type="text" id="val-spesialis" placeholder="—">
+            <input type="text" id="val-spesialis" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
           </div>
           <div class="readonly-item">
             <label>Nama Klinik</label>
@@ -610,7 +610,11 @@
           </div>
           <div class="readonly-item">
             <label>District / Area</label>
-            <input type="text" id="val-districtArea" placeholder="—">
+            <input type="text" id="val-districtArea" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
+          </div>
+          <div class="readonly-item">
+            <label>Region</label>
+            <input type="text" id="val-region" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
           </div>
         </div>
       </div>
@@ -904,14 +908,14 @@ function updateActiveItem(items) {
 function fillUserData(nama) {
   const user = usersData.find(u => u.namaUser === nama);
   if (user) {
-    ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'].forEach(f => {
+    ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea','region'].forEach(f => {
       document.getElementById('val-' + f).value = user[f] || '';
     });
   } else { clearUserDetail(); }
 }
 
 function clearUserDetail() {
-  ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea'].forEach(f => {
+  ['idUser','spesialis','namaKlinik','posisi','noKontak','districtArea','region'].forEach(f => {
     document.getElementById('val-' + f).value = '';
   });
 }
@@ -966,6 +970,8 @@ function validate() {
     { id: 'val-posisi',       label: 'Posisi' },
     { id: 'val-noKontak',     label: 'No Kontak' },
     { id: 'val-districtArea', label: 'District / Area' },
+    { id: 'val-region',       label: 'Region' },
+    { id: 'val-region',      label: 'Region' },
     { id: 'tanggal',          label: 'Tanggal' },
     { id: 'bulan',            label: 'Bulan' },
     { id: 'kategori',         label: 'Kategori' },
@@ -1016,6 +1022,8 @@ async function submitForm() {
     posisi          : document.getElementById('val-posisi').value       || '',
     noKontak        : document.getElementById('val-noKontak').value     || user.noKontak || '',
     districtArea    : document.getElementById('val-districtArea').value || '',
+    region          : document.getElementById('val-region').value        || '',
+    region          : document.getElementById('val-region').value        || '',
     tanggal         : document.getElementById('tanggal').value,
     bulan           : document.getElementById('bulan').value,
     kategori        : document.getElementById('kategori').value,
