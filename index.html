@@ -3,35 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Form Klaim Entertain</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Form Klaim Entertain — Dr.FS Theory</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root {
-    --bg: #f4f6f9;
-    --card: #ffffff;
-    --primary: #1a56db;
-    --primary-light: #e8f0fe;
-    --primary-dark: #1241a8;
-    --text: #1a1d23;
-    --text-muted: #6b7280;
-    --border: #e5e7eb;
-    --input-bg: #f9fafb;
-    --success: #059669;
-    --success-bg: #ecfdf5;
-    --error: #dc2626;
-    --error-bg: #fef2f2;
-    --radius: 10px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-lg: 0 4px 24px rgba(0,0,0,0.08);
+    --teal: #0d9488;
+    --teal-light: #2dd4bf;
+    --purple: #8b5cf6;
+    --error: #ef4444;
+    --text: #1a1a2e;
+    --text-muted: #888;
+    --border: #e0f2f0;
+    --radius: 12px;
+    --shadow: 0 2px 16px rgba(13,148,136,0.06);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
+    background: linear-gradient(160deg, #f0f4ff 0%, #fdf0ff 50%, #f0fff8 100%);
     min-height: 100vh;
     padding: 24px 16px 48px;
   }
@@ -41,7 +33,6 @@
   /* ── Login Screen ── */
   .login-screen {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 90vh;
@@ -49,40 +40,40 @@
 
   .login-card {
     background: #fff;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-lg);
+    border-radius: 20px;
+    border: 1px solid #e8f5f3;
+    box-shadow: 0 8px 40px rgba(13,148,136,0.12);
     padding: 40px 32px;
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
 
-  .login-logo {
-    width: 64px; height: 64px;
-    background: var(--primary-light);
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 28px;
+  .login-logo-wrap {
+    background: #0d1a1a;
+    border-radius: 14px;
+    padding: 12px 20px;
+    display: inline-block;
+    margin-bottom: 20px;
   }
 
-  .login-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  .login-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
-
-  .google-btn-wrap {
-    display: flex;
-    justify-content: center;
+  .login-logo-wrap img {
+    height: 40px;
+    width: auto;
+    mix-blend-mode: screen;
   }
+
+  .login-card h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .login-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+
+  .google-btn-wrap { display: flex; justify-content: center; }
 
   .checking-access {
     display: none;
     align-items: center;
     justify-content: center;
     gap: 10px;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-muted);
     padding: 12px 0;
   }
@@ -90,7 +81,6 @@
   /* ── Denied Screen ── */
   .denied-screen {
     display: none;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 90vh;
@@ -98,18 +88,18 @@
 
   .denied-card {
     background: #fff;
-    border-radius: 16px;
+    border-radius: 20px;
     border: 1px solid #fecaca;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 8px 40px rgba(239,68,68,0.1);
     padding: 40px 32px;
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
   }
 
   .denied-icon {
     width: 64px; height: 64px;
-    background: var(--error-bg);
+    background: #fef2f2;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -118,8 +108,8 @@
     font-size: 28px;
   }
 
-  .denied-card h2 { font-size: 20px; font-weight: 600; color: var(--error); margin-bottom: 8px; }
-  .denied-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+  .denied-card h2 { font-size: 20px; font-weight: 700; color: var(--error); margin-bottom: 8px; }
+  .denied-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
 
   /* ── User Bar ── */
   .user-bar {
@@ -127,10 +117,10 @@
     align-items: center;
     justify-content: space-between;
     background: #fff;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border: 1px solid #e8f5f3;
+    border-radius: 14px;
     padding: 10px 16px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     box-shadow: var(--shadow);
   }
 
@@ -139,94 +129,144 @@
   .user-avatar {
     width: 34px; height: 34px;
     border-radius: 50%;
-    background: var(--primary);
+    background: linear-gradient(135deg, var(--teal), var(--purple));
     color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
     flex-shrink: 0;
   }
 
   .user-bar-name { font-weight: 600; color: var(--text); font-size: 13px; }
-  .user-bar-email { color: var(--text-muted); font-size: 12px; }
+  .user-bar-email { color: var(--text-muted); font-size: 11px; }
 
   .btn-logout {
     padding: 6px 14px;
-    background: var(--error-bg);
+    background: rgba(239,68,68,0.08);
     color: var(--error);
     font-size: 12px;
     font-weight: 600;
     font-family: inherit;
-    border: none;
+    border: 1px solid rgba(239,68,68,0.15);
     border-radius: 8px;
     cursor: pointer;
     white-space: nowrap;
   }
-  .btn-logout:hover { background: #fecaca; }
+  .btn-logout:hover { background: rgba(239,68,68,0.15); }
 
-  /* ── Header ── */
-  .header { text-align: center; margin-bottom: 28px; }
+  /* ── Hero ── */
+  .hero {
+    background: #0d1a1a;
+    border-radius: 20px;
+    padding: 28px 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
 
-  .header-badge {
+  .hero-glow1 {
+    position: absolute; top: -60px; right: -40px;
+    width: 220px; height: 220px;
+    background: radial-gradient(ellipse, rgba(13,148,136,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute; bottom: -60px; left: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.25) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-top {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-top img {
+    height: 38px;
+    width: auto;
+    mix-blend-mode: screen;
+  }
+
+  .hero-badge {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: var(--primary-light);
-    color: var(--primary);
-    font-size: 12px;
-    font-weight: 600;
-    padding: 4px 12px;
+    background: rgba(13,148,136,0.15);
+    color: var(--teal-light);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 14px;
     border-radius: 20px;
     margin-bottom: 10px;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
+    border: 1px solid rgba(13,148,136,0.25);
+    position: relative;
+    z-index: 1;
   }
 
-  .header h1 { font-size: 26px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-  .header p { font-size: 14px; color: var(--text-muted); }
+  .hero h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero h1 span { color: var(--teal-light); }
+  .hero p { font-size: 13px; color: #4a7a7a; position: relative; z-index: 1; }
 
   /* ── Card ── */
   .card {
-    background: var(--card);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #e8f5f3;
     box-shadow: var(--shadow);
-    padding: 24px;
-    margin-bottom: 16px;
+    padding: 20px;
+    margin-bottom: 14px;
   }
 
   .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    color: #aaa;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-bottom: 18px;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  .card-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .card-title svg { color: var(--teal); }
+  .card-title::after { content: ''; flex: 1; height: 0.5px; background: #e8f5f3; }
 
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 13px; font-weight: 500; color: var(--text); }
+  .field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .field label span { color: var(--error); margin-left: 2px; }
 
   .field input,
   .field select,
   .field textarea {
     width: 100%;
-    padding: 9px 12px;
+    padding: 10px 13px;
     font-size: 14px;
     font-family: inherit;
-    background: var(--input-bg);
+    background: #fafafa;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
@@ -235,8 +275,8 @@
   .field input:focus,
   .field select:focus,
   .field textarea:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
     background: #fff;
   }
 
@@ -250,10 +290,10 @@
     padding-right: 32px;
   }
 
-  /* ── Readonly group ── */
+  /* ── Readonly Group ── */
   .readonly-group {
-    background: #f0f4ff;
-    border: 1px solid #c7d7f9;
+    background: linear-gradient(135deg, #f0fdf9, #faf5ff);
+    border: 1px solid #ccfbf1;
     border-radius: var(--radius);
     padding: 14px 16px;
     display: grid;
@@ -263,26 +303,27 @@
   }
 
   .readonly-item label {
-    font-size: 11px;
-    font-weight: 600;
-    color: var(--primary);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--teal);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.07em;
     display: block;
     margin-bottom: 3px;
   }
 
   .readonly-item input {
     background: #fff;
-    border: 1px solid #c7d7f9;
-    border-radius: 6px;
-    padding: 5px 10px;
-    font-size: 13px;
+    border: 1px solid #ccfbf1;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 500;
     width: 100%;
     font-family: inherit;
     outline: none;
-    color: var(--text);
+    color: #555;
+    cursor: default;
   }
 
   /* ── Autocomplete ── */
@@ -290,30 +331,27 @@
 
   .autocomplete-wrap input {
     width: 100%;
-    padding: 9px 36px 9px 12px;
+    padding: 10px 36px 10px 13px;
     font-size: 14px;
     font-family: inherit;
-    background: var(--input-bg);
+    background: #fafafa;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     color: var(--text);
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
   }
 
   .autocomplete-wrap input:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(26,86,219,0.1);
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
     background: #fff;
   }
 
-  .autocomplete-wrap .ac-icon {
-    position: absolute;
-    right: 10px;
-    top: 50%;
+  .ac-icon {
+    position: absolute; right: 10px; top: 50%;
     transform: translateY(-50%);
-    pointer-events: none;
-    color: var(--text-muted);
+    pointer-events: none; color: var(--text-muted);
   }
 
   .ac-dropdown {
@@ -323,7 +361,7 @@
     left: 0; right: 0;
     background: #fff;
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     max-height: 240px;
     overflow-y: auto;
     z-index: 200;
@@ -342,60 +380,61 @@
   }
 
   .ac-item:last-child { border-bottom: none; }
-  .ac-item:hover, .ac-item.active { background: var(--primary-light); color: var(--primary-dark); }
-  .ac-item mark { background: none; color: var(--primary); font-weight: 600; }
+  .ac-item:hover, .ac-item.active { background: #f0fdf9; color: var(--teal); }
+  .ac-item mark { background: none; color: var(--teal); font-weight: 700; }
   .ac-empty { padding: 12px 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
 
   /* ── Upload ── */
   .upload-area {
-    border: 2px dashed var(--border);
+    border: 2px dashed #ccfbf1;
     border-radius: var(--radius);
-    padding: 20px;
+    padding: 24px;
     text-align: center;
     cursor: pointer;
     transition: all 0.15s;
-    background: var(--input-bg);
+    background: linear-gradient(135deg, #f0fdf9, #faf5ff);
     position: relative;
   }
 
-  .upload-area:hover { border-color: var(--primary); background: var(--primary-light); }
+  .upload-area:hover { border-color: var(--teal); background: #e6fdf8; }
   .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-  .upload-icon { font-size: 28px; margin-bottom: 8px; }
+  .upload-icon { font-size: 32px; margin-bottom: 8px; color: var(--teal); }
   .upload-text { font-size: 13px; color: var(--text-muted); }
-  .upload-text strong { color: var(--primary); }
+  .upload-text strong { color: var(--teal); }
 
   .preview-img {
-    margin-top: 10px;
+    margin-top: 12px;
     width: 100%;
-    max-height: 180px;
+    max-height: 200px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid var(--border);
     display: none;
   }
 
-  /* ── Button ── */
+  /* ── Submit Button ── */
   .btn-submit {
     width: 100%;
-    padding: 13px;
-    background: var(--primary);
+    padding: 14px;
+    background: linear-gradient(90deg, var(--teal), var(--purple));
     color: #fff;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     font-family: inherit;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
+    transition: opacity 0.15s, transform 0.1s;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
+    box-shadow: 0 4px 20px rgba(13,148,136,0.25);
   }
 
-  .btn-submit:hover { background: var(--primary-dark); }
+  .btn-submit:hover { opacity: 0.92; }
   .btn-submit:active { transform: scale(0.99); }
-  .btn-submit:disabled { background: #9eb3e8; cursor: not-allowed; }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .spinner {
     width: 18px; height: 18px;
@@ -420,7 +459,7 @@
     border-radius: var(--radius);
     font-size: 14px;
     font-weight: 500;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
     transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
     z-index: 999;
     display: flex;
@@ -430,7 +469,7 @@
   }
 
   .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { background: var(--success); }
+  .toast.success { background: var(--teal); }
   .toast.error { background: var(--error); }
 
   /* ── Success Screen ── */
@@ -441,32 +480,31 @@
   }
 
   .success-icon {
-    width: 64px; height: 64px;
-    background: var(--success-bg);
+    width: 72px; height: 72px;
+    background: #f0fdf9;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 16px;
-    font-size: 28px;
+    font-size: 32px;
   }
 
-  .success-screen h2 { font-size: 20px; font-weight: 600; margin-bottom: 8px; }
-  .success-screen p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+  .success-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+  .success-screen p { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
 
   .btn-new {
-    padding: 10px 24px;
-    background: var(--primary-light);
-    color: var(--primary);
+    padding: 11px 28px;
+    background: linear-gradient(90deg, var(--teal), var(--purple));
+    color: #fff;
     font-size: 14px;
-    font-weight: 600;
+    font-weight: 700;
     font-family: inherit;
     border: none;
     border-radius: var(--radius);
     cursor: pointer;
+    box-shadow: 0 4px 16px rgba(13,148,136,0.2);
   }
-
-  .btn-new:hover { background: #d4e3fd; }
 
   /* ── Loading dots ── */
   .loading-users {
@@ -482,13 +520,12 @@
     display: inline-block;
     width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--primary);
+    background: var(--teal);
     animation: dot 1.2s infinite;
   }
 
   .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
   .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
-
   @keyframes dot { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
 
   @media (max-width: 560px) {
@@ -505,7 +542,9 @@
   <!-- ── LOGIN SCREEN ── -->
   <div id="login-screen" class="login-screen">
     <div class="login-card">
-      <div class="login-logo">🗂️</div>
+      <div class="login-logo-wrap">
+        <img src="DR_FS_THEORY_MASTER_LOGO_R1-Teal.png" alt="Dr.FS Theory">
+      </div>
       <h2>Form Klaim Entertain</h2>
       <p>Masuk dengan akun Google yang terdaftar untuk mengakses form pengajuan klaim entertain</p>
       <div id="g_id_onload"
@@ -543,10 +582,10 @@
     </div>
   </div>
 
-  <!-- ── MAIN AREA (setelah login berhasil) ── -->
+  <!-- ── MAIN AREA ── -->
   <div id="main-area" style="display:none;">
 
-    <!-- User bar -->
+    <!-- User Bar -->
     <div class="user-bar">
       <div class="user-bar-info">
         <div class="user-avatar" id="user-avatar"></div>
@@ -558,21 +597,27 @@
       <button class="btn-logout" onclick="backToLogin()">Keluar</button>
     </div>
 
-    <div class="header">
-      <div class="header-badge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
-        Klaim Entertain
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-glow1"></div>
+      <div class="hero-glow2"></div>
+      <div class="hero-top">
+        <img src="DR_FS_THEORY_MASTER_LOGO_R1-Teal.png" alt="Dr.FS Theory">
       </div>
-      <h1>Form Klaim Entertain</h1>
-      <p>Isi form di bawah ini untuk mengajukan klaim entertain</p>
+      <div class="hero-badge">🗂️ Klaim Entertain</div>
+      <h1>Form <span>Klaim</span> Entertain</h1>
+      <p>Isi form di bawah untuk mengajukan klaim entertain kamu</p>
     </div>
 
     <div id="form-area">
 
       <!-- Data User -->
       <div class="card">
-        <div class="card-title">Data user</div>
-        <div class="field" style="margin-bottom:16px;">
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Data user
+        </div>
+        <div class="field" style="margin-bottom:14px;">
           <label>Nama user <span>*</span></label>
           <div id="user-loading" class="loading-users">
             <div class="dot-loader"><span></span><span></span><span></span></div>
@@ -590,11 +635,11 @@
         <div class="readonly-group">
           <div class="readonly-item">
             <label>ID User</label>
-            <input type="text" id="val-idUser" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
+            <input type="text" id="val-idUser" placeholder="—" readonly>
           </div>
           <div class="readonly-item">
             <label>Spesialis</label>
-            <input type="text" id="val-spesialis" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
+            <input type="text" id="val-spesialis" placeholder="—" readonly>
           </div>
           <div class="readonly-item">
             <label>Nama Klinik</label>
@@ -610,18 +655,21 @@
           </div>
           <div class="readonly-item">
             <label>District / Area</label>
-            <input type="text" id="val-districtArea" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
+            <input type="text" id="val-districtArea" placeholder="—" readonly>
           </div>
           <div class="readonly-item">
             <label>Region</label>
-            <input type="text" id="val-region" placeholder="—" readonly style="background:#f0f4ff;color:var(--primary-dark);font-weight:500;cursor:default;">
+            <input type="text" id="val-region" placeholder="—" readonly>
           </div>
         </div>
       </div>
 
       <!-- Detail Klaim -->
       <div class="card">
-        <div class="card-title">Detail klaim</div>
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          Detail klaim
+        </div>
         <div class="grid-2" style="margin-bottom:14px;">
           <div class="field">
             <label>Tanggal <span>*</span></label>
@@ -649,7 +697,7 @@
             <option>Makan Dengan User</option>
           </select>
         </div>
-        <div class="grid-2" style="margin-bottom:14px;">
+        <div class="grid-2">
           <div class="field">
             <label>Nominal (Rp) <span>*</span></label>
             <input type="text" id="nominal" placeholder="0" inputmode="numeric"
@@ -667,7 +715,10 @@
 
       <!-- Detail Entertain -->
       <div class="card">
-        <div class="card-title">Detail entertain</div>
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+          Detail entertain
+        </div>
         <div class="field" style="margin-bottom:14px;">
           <label>Tempat entertain <span>*</span></label>
           <input type="text" id="tempatEntertain" placeholder="Nama restoran / tempat">
@@ -684,7 +735,10 @@
 
       <!-- Upload Foto -->
       <div class="card">
-        <div class="card-title">Bukti foto</div>
+        <div class="card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
+          Bukti foto
+        </div>
         <div class="upload-area" id="uploadArea">
           <input type="file" id="fotoInput" accept="image/*" onchange="previewFoto(event)">
           <div class="upload-icon">📎</div>
@@ -697,11 +751,11 @@
       <!-- Submit -->
       <button class="btn-submit" id="btnSubmit" onclick="submitForm()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
-        <span id="btn-text">Kirim klaim</span>
+        <span id="btn-text">Kirim Klaim</span>
         <div class="spinner" id="spinner"></div>
       </button>
 
-    </div><!-- end form-area -->
+    </div>
 
     <!-- Success Screen -->
     <div class="card success-screen" id="success-screen">
@@ -711,46 +765,33 @@
       <button class="btn-new" onclick="resetForm()">+ Buat klaim baru</button>
     </div>
 
-  </div><!-- end main-area -->
-
-</div><!-- end container -->
+  </div>
+</div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════
-//  KONFIGURASI — sesuaikan ini
-// ════════════════════════════════
 const API_URL = 'https://script.google.com/macros/s/AKfycbzJmpNoLYa2bPWNeJ5EdhQe46oHoJcFwv4B_bt9ubl6vu3zctCjxRgRUcNFZbOWLKkT/exec';
 
-// ════════════════════════════════
-//  STATE
-// ════════════════════════════════
-let usersData       = [];
-let fotoBase64      = '';
-let fotoName        = '';
-let fotoMime        = '';
-let acActiveIndex   = -1;
-let currentEmail    = '';
-let currentName     = '';
+let usersData     = [];
+let fotoBase64    = '';
+let fotoName      = '';
+let fotoMime      = '';
+let acActiveIndex = -1;
+let currentEmail  = '';
+let currentName   = '';
 
 const bulanNames = ['Januari','Februari','Maret','April','Mei','Juni',
                     'Juli','Agustus','September','Oktober','November','Desember'];
 
-// ════════════════════════════════
-//  GOOGLE LOGIN
-// ════════════════════════════════
+// ── Google Login ──
 function handleCredential(response) {
-  // Decode JWT payload dari Google
   const parts   = response.credential.split('.');
   const payload = JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
   const email   = payload.email || '';
   const name    = payload.name  || email;
-
-  // Tampilkan animasi checking
   document.querySelector('.google-btn-wrap').style.display = 'none';
   document.getElementById('checking-access').style.display = 'flex';
-
   checkAccess(email, name);
 }
 
@@ -758,28 +799,18 @@ async function checkAccess(email, name) {
   try {
     const res  = await fetch(API_URL + '?action=checkAccess&email=' + encodeURIComponent(email));
     const data = await res.json();
-
     if (data.allowed) {
-      // Simpan state user
       currentEmail = email;
       currentName  = name;
-
-      // Isi user bar
-      document.getElementById('user-avatar').textContent   = name.charAt(0).toUpperCase();
-      document.getElementById('user-bar-name').textContent = name;
-      document.getElementById('user-bar-email').textContent= email;
-
-      // Transisi ke form
+      document.getElementById('user-avatar').textContent    = name.charAt(0).toUpperCase();
+      document.getElementById('user-bar-name').textContent  = name;
+      document.getElementById('user-bar-email').textContent = email;
       document.getElementById('login-screen').style.display  = 'none';
       document.getElementById('denied-screen').style.display = 'none';
       document.getElementById('main-area').style.display     = 'block';
-
-      // Init form defaults & load users
       initFormDefaults();
       loadUsers();
-
     } else {
-      // Akses ditolak
       document.getElementById('denied-msg').innerHTML =
         `Email <strong>${email}</strong> tidak terdaftar untuk mengakses form ini.<br>Hubungi admin untuk mendapatkan akses.`;
       document.getElementById('login-screen').style.display  = 'none';
@@ -788,7 +819,7 @@ async function checkAccess(email, name) {
   } catch(err) {
     showToast('Gagal memeriksa akses. Cek koneksi.', 'error');
     document.querySelector('.google-btn-wrap').style.display = 'flex';
-    document.getElementById('checking-access').style.display= 'none';
+    document.getElementById('checking-access').style.display = 'none';
   }
 }
 
@@ -798,17 +829,13 @@ function backToLogin() {
   location.reload();
 }
 
-// ════════════════════════════════
-//  FORM DEFAULTS
-// ════════════════════════════════
+// ── Form Defaults ──
 function initFormDefaults() {
   document.getElementById('tanggal').value = new Date().toISOString().split('T')[0];
   document.getElementById('bulan').value   = bulanNames[new Date().getMonth()];
 }
 
-// ════════════════════════════════
-//  LOAD USERS
-// ════════════════════════════════
+// ── Load Users ──
 async function loadUsers() {
   try {
     const res  = await fetch(API_URL + '?action=getUsers');
@@ -818,13 +845,11 @@ async function loadUsers() {
     document.getElementById('ac-wrap').style.display      = 'block';
   } catch(err) {
     document.getElementById('user-loading').innerHTML =
-      '<span style="color:#dc2626">Gagal memuat data user. Cek koneksi & Apps Script.</span>';
+      '<span style="color:#ef4444">Gagal memuat data user. Cek koneksi.</span>';
   }
 }
 
-// ════════════════════════════════
-//  AUTOCOMPLETE
-// ════════════════════════════════
+// ── Autocomplete ──
 function highlight(text, query) {
   if (!query) return text;
   const esc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -920,18 +945,14 @@ function clearUserDetail() {
   });
 }
 
-// ════════════════════════════════
-//  FORMAT AKUNTING
-// ════════════════════════════════
+// ── Format Akunting ──
 function formatAkunting(input, hiddenId) {
   const raw = input.value.replace(/\D/g, '');
   document.getElementById(hiddenId).value = raw;
   input.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
 }
 
-// ════════════════════════════════
-//  FOTO
-// ════════════════════════════════
+// ── Foto ──
 function previewFoto(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -948,9 +969,7 @@ function previewFoto(e) {
   reader.readAsDataURL(file);
 }
 
-// ════════════════════════════════
-//  TOAST
-// ════════════════════════════════
+// ── Toast ──
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -958,9 +977,7 @@ function showToast(msg, type = '') {
   setTimeout(() => t.className = 'toast', 3000);
 }
 
-// ════════════════════════════════
-//  VALIDASI
-// ════════════════════════════════
+// ── Validasi ──
 function validate() {
   const required = [
     { id: 'namaUser',         label: 'Nama User' },
@@ -971,7 +988,6 @@ function validate() {
     { id: 'val-noKontak',     label: 'No Kontak' },
     { id: 'val-districtArea', label: 'District / Area' },
     { id: 'val-region',       label: 'Region' },
-    { id: 'val-region',      label: 'Region' },
     { id: 'tanggal',          label: 'Tanggal' },
     { id: 'bulan',            label: 'Bulan' },
     { id: 'kategori',         label: 'Kategori' },
@@ -999,9 +1015,7 @@ function validate() {
   return true;
 }
 
-// ════════════════════════════════
-//  SUBMIT
-// ════════════════════════════════
+// ── Submit ──
 async function submitForm() {
   if (!validate()) return;
   const btn     = document.getElementById('btnSubmit');
@@ -1012,7 +1026,6 @@ async function submitForm() {
   btnText.textContent   = 'Mengirim...';
 
   const nama = document.getElementById('namaUser').value;
-  const user = usersData.find(u => u.namaUser === nama) || {};
 
   const payload = {
     namaUser        : nama,
@@ -1020,10 +1033,9 @@ async function submitForm() {
     spesialis       : document.getElementById('val-spesialis').value    || '',
     namaKlinik      : document.getElementById('val-namaKlinik').value   || '',
     posisi          : document.getElementById('val-posisi').value       || '',
-    noKontak        : document.getElementById('val-noKontak').value     || user.noKontak || '',
+    noKontak        : document.getElementById('val-noKontak').value     || '',
     districtArea    : document.getElementById('val-districtArea').value || '',
-    region          : document.getElementById('val-region').value        || '',
-    region          : document.getElementById('val-region').value        || '',
+    region          : document.getElementById('val-region').value       || '',
     tanggal         : document.getElementById('tanggal').value,
     bulan           : document.getElementById('bulan').value,
     kategori        : document.getElementById('kategori').value,
@@ -1032,8 +1044,8 @@ async function submitForm() {
     tempatEntertain : document.getElementById('tempatEntertain').value,
     alamatEntertain : document.getElementById('alamatEntertain').value,
     tujuanEntertain : document.getElementById('tujuanEntertain').value,
-    emailPengisi    : currentEmail,   // ← email dicatat otomatis
-    namaPengisi     : currentName,    // ← nama juga dicatat
+    emailPengisi    : currentEmail,
+    namaPengisi     : currentName,
     foto            : fotoBase64,
     fotoName        : fotoName,
     fotoMime        : fotoMime
@@ -1043,8 +1055,8 @@ async function submitForm() {
     const res  = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
     const data = await res.json();
     if (data.success) {
-      document.getElementById('form-area').style.display    = 'none';
-      document.getElementById('success-screen').style.display = 'block';
+      document.getElementById('form-area').style.display       = 'none';
+      document.getElementById('success-screen').style.display  = 'block';
     } else {
       showToast('Gagal menyimpan: ' + (data.message || 'Error'), 'error');
     }
@@ -1053,21 +1065,19 @@ async function submitForm() {
   } finally {
     btn.disabled          = false;
     spinner.style.display = 'none';
-    btnText.textContent   = 'Kirim klaim';
+    btnText.textContent   = 'Kirim Klaim';
   }
 }
 
-// ════════════════════════════════
-//  RESET
-// ════════════════════════════════
+// ── Reset ──
 function resetForm() {
-  document.getElementById('form-area').style.display       = 'block';
-  document.getElementById('success-screen').style.display  = 'none';
-  document.getElementById('namaUserInput').value = '';
-  document.getElementById('namaUser').value      = '';
-  document.getElementById('nominal').value       = '';
-  document.getElementById('averageSales').value  = '';
-  document.getElementById('nominal-val').value   = '';
+  document.getElementById('form-area').style.display      = 'block';
+  document.getElementById('success-screen').style.display = 'none';
+  document.getElementById('namaUserInput').value  = '';
+  document.getElementById('namaUser').value       = '';
+  document.getElementById('nominal').value        = '';
+  document.getElementById('averageSales').value   = '';
+  document.getElementById('nominal-val').value    = '';
   document.getElementById('averageSales-val').value = '';
   clearUserDetail();
   ['tanggal','bulan','kategori','tempatEntertain','alamatEntertain','tujuanEntertain'].forEach(id => {
