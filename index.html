@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -6,6 +7,7 @@
 <title>Form Klaim Entertain — Dr.FS Theory</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   :root {
     --teal: #0d9488;
@@ -30,223 +32,52 @@
 
   .container { max-width: 720px; margin: 0 auto; }
 
-  /* ── Login Screen ── */
-  .login-screen {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-  }
+  .login-screen { display: flex; align-items: center; justify-content: center; min-height: 90vh; }
 
   .login-card {
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid #e8f5f3;
-    box-shadow: 0 8px 40px rgba(13,148,136,0.12);
-    padding: 40px 32px;
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
+    background: #fff; border-radius: 20px; border: 1px solid #e8f5f3;
+    box-shadow: 0 8px 40px rgba(13,148,136,0.12); padding: 40px 32px;
+    max-width: 420px; width: 100%; text-align: center;
   }
 
-  .login-logo-wrap {
-    background: #0d1a1a;
-    border-radius: 14px;
-    padding: 12px 20px;
-    display: inline-block;
-    margin-bottom: 20px;
-  }
-
-  .login-logo-wrap img {
-    height: 40px;
-    width: auto;
-    mix-blend-mode: screen;
-  }
-
+  .login-logo-wrap { background: #0d1a1a; border-radius: 14px; padding: 12px 20px; display: inline-block; margin-bottom: 20px; }
+  .login-logo-wrap img { height: 40px; width: auto; mix-blend-mode: screen; }
   .login-card h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
   .login-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
-
   .google-btn-wrap { display: flex; justify-content: center; }
 
-  .checking-access {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    font-size: 13px;
-    color: var(--text-muted);
-    padding: 12px 0;
-  }
+  .checking-access { display: none; align-items: center; justify-content: center; gap: 10px; font-size: 13px; color: var(--text-muted); padding: 12px 0; }
 
-  /* ── Denied Screen ── */
-  .denied-screen {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    min-height: 90vh;
-  }
-
+  .denied-screen { display: none; align-items: center; justify-content: center; min-height: 90vh; }
   .denied-card {
-    background: #fff;
-    border-radius: 20px;
-    border: 1px solid #fecaca;
-    box-shadow: 0 8px 40px rgba(239,68,68,0.1);
-    padding: 40px 32px;
-    max-width: 420px;
-    width: 100%;
-    text-align: center;
+    background: #fff; border-radius: 20px; border: 1px solid #fecaca;
+    box-shadow: 0 8px 40px rgba(239,68,68,0.1); padding: 40px 32px; max-width: 420px; width: 100%; text-align: center;
   }
-
-  .denied-icon {
-    width: 64px; height: 64px;
-    background: #fef2f2;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 28px;
-  }
-
+  .denied-icon { width: 64px; height: 64px; background: #fef2f2; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 28px; }
   .denied-card h2 { font-size: 20px; font-weight: 700; color: var(--error); margin-bottom: 8px; }
   .denied-card p { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
 
-  /* ── User Bar ── */
-  .user-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #fff;
-    border: 1px solid #e8f5f3;
-    border-radius: 14px;
-    padding: 10px 16px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
-
+  .user-bar { display: flex; align-items: center; justify-content: space-between; background: #fff; border: 1px solid #e8f5f3; border-radius: 14px; padding: 10px 16px; margin-bottom: 16px; box-shadow: var(--shadow); }
   .user-bar-info { display: flex; align-items: center; gap: 10px; }
-
-  .user-avatar {
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--teal), var(--purple));
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-    flex-shrink: 0;
-  }
-
+  .user-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--purple)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
   .user-bar-name { font-weight: 600; color: var(--text); font-size: 13px; }
   .user-bar-email { color: var(--text-muted); font-size: 11px; }
 
-  .btn-logout {
-    padding: 6px 14px;
-    background: rgba(239,68,68,0.08);
-    color: var(--error);
-    font-size: 12px;
-    font-weight: 600;
-    font-family: inherit;
-    border: 1px solid rgba(239,68,68,0.15);
-    border-radius: 8px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
+  .btn-logout { padding: 6px 14px; background: rgba(239,68,68,0.08); color: var(--error); font-size: 12px; font-weight: 600; font-family: inherit; border: 1px solid rgba(239,68,68,0.15); border-radius: 8px; cursor: pointer; white-space: nowrap; }
   .btn-logout:hover { background: rgba(239,68,68,0.15); }
 
-  /* ── Hero ── */
-  .hero {
-    background: #0d1a1a;
-    border-radius: 20px;
-    padding: 28px 24px;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-glow1 {
-    position: absolute; top: -60px; right: -40px;
-    width: 220px; height: 220px;
-    background: radial-gradient(ellipse, rgba(13,148,136,0.3) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-glow2 {
-    position: absolute; bottom: -60px; left: -40px;
-    width: 200px; height: 200px;
-    background: radial-gradient(ellipse, rgba(139,92,246,0.25) 0%, transparent 70%);
-    pointer-events: none;
-  }
-
-  .hero-top {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 16px;
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero-top img {
-    height: 38px;
-    width: auto;
-    mix-blend-mode: screen;
-  }
-
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(13,148,136,0.15);
-    color: var(--teal-light);
-    font-size: 10px;
-    font-weight: 700;
-    padding: 4px 14px;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    border: 1px solid rgba(13,148,136,0.25);
-    position: relative;
-    z-index: 1;
-  }
-
-  .hero h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 6px;
-    letter-spacing: -0.5px;
-    position: relative;
-    z-index: 1;
-  }
-
+  .hero { background: #0d1a1a; border-radius: 20px; padding: 28px 24px; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .hero-glow1 { position: absolute; top: -60px; right: -40px; width: 220px; height: 220px; background: radial-gradient(ellipse, rgba(13,148,136,0.3) 0%, transparent 70%); pointer-events: none; }
+  .hero-glow2 { position: absolute; bottom: -60px; left: -40px; width: 200px; height: 200px; background: radial-gradient(ellipse, rgba(139,92,246,0.25) 0%, transparent 70%); pointer-events: none; }
+  .hero-top { display: flex; justify-content: flex-end; margin-bottom: 16px; position: relative; z-index: 1; }
+  .hero-top img { height: 38px; width: auto; mix-blend-mode: screen; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(13,148,136,0.15); color: var(--teal-light); font-size: 10px; font-weight: 700; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid rgba(13,148,136,0.25); position: relative; z-index: 1; }
+  .hero h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 6px; letter-spacing: -0.5px; position: relative; z-index: 1; }
   .hero h1 span { color: var(--teal-light); }
   .hero p { font-size: 13px; color: #4a7a7a; position: relative; z-index: 1; }
 
-  /* ── Card ── */
-  .card {
-    background: #fff;
-    border-radius: 16px;
-    border: 1px solid #e8f5f3;
-    box-shadow: var(--shadow);
-    padding: 20px;
-    margin-bottom: 14px;
-  }
-
-  .card-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: #aaa;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
+  .card { background: #fff; border-radius: 16px; border: 1px solid #e8f5f3; box-shadow: var(--shadow); padding: 20px; margin-bottom: 14px; }
+  .card-title { font-size: 11px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
   .card-title svg { color: var(--teal); }
   .card-title::after { content: ''; flex: 1; height: 0.5px; background: #e8f5f3; }
 
@@ -257,273 +88,79 @@
   .field label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
   .field label span { color: var(--error); margin-left: 2px; }
 
-  .field input,
-  .field select,
-  .field textarea {
-    width: 100%;
-    padding: 10px 13px;
-    font-size: 14px;
-    font-family: inherit;
-    background: #fafafa;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
+  .field input, .field select, .field textarea {
+    width: 100%; padding: 10px 13px; font-size: 14px; font-family: inherit; background: #fafafa;
+    border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+    transition: border-color 0.15s, box-shadow 0.15s; outline: none;
   }
-
-  .field input:focus,
-  .field select:focus,
-  .field textarea:focus {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
-    background: #fff;
-  }
-
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); background: #fff; }
   .field textarea { resize: vertical; min-height: 80px; }
-
   .field select {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 32px;
+    background-repeat: no-repeat; background-position: right 10px center; padding-right: 32px;
   }
 
-  /* ── Readonly Group ── */
-  .readonly-group {
-    background: linear-gradient(135deg, #f0fdf9, #faf5ff);
-    border: 1px solid #ccfbf1;
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 4px;
-  }
+  .readonly-group { background: linear-gradient(135deg, #f0fdf9, #faf5ff); border: 1px solid #ccfbf1; border-radius: var(--radius); padding: 14px 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px; }
+  .readonly-item label { font-size: 10px; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: 0.07em; display: block; margin-bottom: 3px; }
+  .readonly-item input { background: #fff; border: 1px solid #ccfbf1; border-radius: 8px; padding: 6px 10px; font-size: 12px; font-weight: 500; width: 100%; font-family: inherit; outline: none; color: #555; cursor: default; }
 
-  .readonly-item label {
-    font-size: 10px;
-    font-weight: 700;
-    color: var(--teal);
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    display: block;
-    margin-bottom: 3px;
-  }
-
-  .readonly-item input {
-    background: #fff;
-    border: 1px solid #ccfbf1;
-    border-radius: 8px;
-    padding: 6px 10px;
-    font-size: 12px;
-    font-weight: 500;
-    width: 100%;
-    font-family: inherit;
-    outline: none;
-    color: #555;
-    cursor: default;
-  }
-
-  /* ── Autocomplete ── */
   .autocomplete-wrap { position: relative; }
-
-  .autocomplete-wrap input {
-    width: 100%;
-    padding: 10px 36px 10px 13px;
-    font-size: 14px;
-    font-family: inherit;
-    background: #fafafa;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    transition: border-color 0.15s, box-shadow 0.15s;
-    outline: none;
-  }
-
-  .autocomplete-wrap input:focus {
-    border-color: var(--teal);
-    box-shadow: 0 0 0 3px rgba(13,148,136,0.1);
-    background: #fff;
-  }
-
-  .ac-icon {
-    position: absolute; right: 10px; top: 50%;
-    transform: translateY(-50%);
-    pointer-events: none; color: var(--text-muted);
-  }
-
-  .ac-dropdown {
-    display: none;
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0; right: 0;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    max-height: 240px;
-    overflow-y: auto;
-    z-index: 200;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-  }
-
+  .autocomplete-wrap input { width: 100%; padding: 10px 36px 10px 13px; font-size: 14px; font-family: inherit; background: #fafafa; border: 1px solid var(--border); border-radius: 10px; color: var(--text); transition: border-color 0.15s, box-shadow 0.15s; outline: none; }
+  .autocomplete-wrap input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(13,148,136,0.1); background: #fff; }
+  .ac-icon { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; color: var(--text-muted); }
+  .ac-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border: 1px solid var(--border); border-radius: 12px; max-height: 240px; overflow-y: auto; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
   .ac-dropdown.open { display: block; }
-
-  .ac-item {
-    padding: 10px 14px;
-    font-size: 14px;
-    cursor: pointer;
-    border-bottom: 1px solid #f3f4f6;
-    transition: background 0.1s;
-    color: var(--text);
-  }
-
+  .ac-item { padding: 10px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #f3f4f6; transition: background 0.1s; color: var(--text); }
   .ac-item:last-child { border-bottom: none; }
   .ac-item:hover, .ac-item.active { background: #f0fdf9; color: var(--teal); }
   .ac-item mark { background: none; color: var(--teal); font-weight: 700; }
   .ac-empty { padding: 12px 14px; font-size: 13px; color: var(--text-muted); text-align: center; }
 
-  /* ── Upload ── */
-  .upload-area {
-    border: 2px dashed #ccfbf1;
-    border-radius: var(--radius);
-    padding: 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: linear-gradient(135deg, #f0fdf9, #faf5ff);
-    position: relative;
-  }
-
+  .upload-area { border: 2px dashed #ccfbf1; border-radius: var(--radius); padding: 24px; text-align: center; cursor: pointer; transition: all 0.15s; background: linear-gradient(135deg, #f0fdf9, #faf5ff); position: relative; }
   .upload-area:hover { border-color: var(--teal); background: #e6fdf8; }
   .upload-area input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
   .upload-icon { font-size: 32px; margin-bottom: 8px; color: var(--teal); }
   .upload-text { font-size: 13px; color: var(--text-muted); }
   .upload-text strong { color: var(--teal); }
 
-  .preview-img {
-    margin-top: 12px;
-    width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    display: none;
-  }
+  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 8px; margin-top: 12px; }
+  .preview-item { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 1; background: #f5f5f5; }
+  .preview-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .preview-remove { position: absolute; top: 3px; right: 3px; width: 20px; height: 20px; border-radius: 50%; background: rgba(0,0,0,0.6); color: #fff; border: none; font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-  /* ── Submit Button ── */
   .btn-submit {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(90deg, var(--teal), var(--purple));
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    font-family: inherit;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    transition: opacity 0.15s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    width: 100%; padding: 14px; background: linear-gradient(90deg, var(--teal), var(--purple)); color: #fff;
+    font-size: 15px; font-weight: 700; font-family: inherit; border: none; border-radius: var(--radius);
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s; display: flex; align-items: center; justify-content: center; gap: 8px;
     box-shadow: 0 4px 20px rgba(13,148,136,0.25);
   }
-
   .btn-submit:hover { opacity: 0.92; }
   .btn-submit:active { transform: scale(0.99); }
   .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  .spinner {
-    width: 18px; height: 18px;
-    border: 2px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
-    border-radius: 50%;
-    animation: spin 0.7s linear infinite;
-    display: none;
-  }
-
+  .spinner { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── Toast ── */
   .toast {
-    position: fixed;
-    bottom: 24px;
-    left: 50%;
-    transform: translateX(-50%) translateY(80px);
-    background: var(--text);
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: var(--radius);
-    font-size: 14px;
-    font-weight: 500;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
-    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    white-space: nowrap;
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: #fff; padding: 12px 20px; border-radius: var(--radius); font-size: 14px; font-weight: 500;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 999;
+    display: flex; align-items: center; gap: 8px; white-space: nowrap;
   }
-
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.success { background: var(--teal); }
   .toast.error { background: var(--error); }
 
-  /* ── Success Screen ── */
-  .success-screen {
-    display: none;
-    text-align: center;
-    padding: 48px 24px;
-  }
-
-  .success-icon {
-    width: 72px; height: 72px;
-    background: #f0fdf9;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 16px;
-    font-size: 32px;
-  }
-
+  .success-screen { display: none; text-align: center; padding: 48px 24px; }
+  .success-icon { width: 72px; height: 72px; background: #f0fdf9; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; }
   .success-screen h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; color: var(--text); }
   .success-screen p { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
 
-  .btn-new {
-    padding: 11px 28px;
-    background: linear-gradient(90deg, var(--teal), var(--purple));
-    color: #fff;
-    font-size: 14px;
-    font-weight: 700;
-    font-family: inherit;
-    border: none;
-    border-radius: var(--radius);
-    cursor: pointer;
-    box-shadow: 0 4px 16px rgba(13,148,136,0.2);
-  }
+  .btn-new { padding: 11px 28px; background: linear-gradient(90deg, var(--teal), var(--purple)); color: #fff; font-size: 14px; font-weight: 700; font-family: inherit; border: none; border-radius: var(--radius); cursor: pointer; box-shadow: 0 4px 16px rgba(13,148,136,0.2); }
 
-  /* ── Loading dots ── */
-  .loading-users {
-    font-size: 13px;
-    color: var(--text-muted);
-    padding: 8px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .dot-loader span {
-    display: inline-block;
-    width: 5px; height: 5px;
-    border-radius: 50%;
-    background: var(--teal);
-    animation: dot 1.2s infinite;
-  }
-
+  .loading-users { font-size: 13px; color: var(--text-muted); padding: 8px 0; display: flex; align-items: center; gap: 8px; }
+  .dot-loader span { display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: var(--teal); animation: dot 1.2s infinite; }
   .dot-loader span:nth-child(2) { animation-delay: 0.2s; }
   .dot-loader span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes dot { 0%,80%,100%{opacity:0.2} 40%{opacity:1} }
@@ -533,13 +170,55 @@
     .readonly-group { grid-template-columns: 1fr; }
     .login-card, .denied-card { padding: 28px 20px; }
   }
+
+  /* ── Dashboard ── */
+  .btn-dash {
+    padding: 6px 14px; background: rgba(139,92,246,0.1); color: var(--purple);
+    font-size: 12px; font-weight: 600; font-family: inherit;
+    border: 1px solid rgba(139,92,246,0.2); border-radius: 8px; cursor: pointer; white-space: nowrap;
+  }
+  .btn-dash:hover { background: rgba(139,92,246,0.18); }
+  .dash-filters { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .dash-filters select { flex: 1; min-width: 140px; }
+  .dash-actions { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .btn-dash-action {
+    padding: 9px 16px; font-size: 13px; font-weight: 700; font-family: inherit;
+    border: none; border-radius: 10px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  }
+  .btn-print { background: var(--teal); color: #fff; }
+  .btn-excel { background: #16a34a; color: #fff; }
+  table.dash-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  table.dash-table th { background: #0d1a1a; color: #fff; padding: 8px 10px; text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: 0.03em; }
+  table.dash-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  table.dash-table tr:hover td { background: #f8fefc; }
+  .dash-total-row td { font-weight: 700; background: #f0fdf9; }
+  .dash-empty { text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px; }
+
+  /* ── Mode Cetak ── */
+  #printArea { display: none; }
+  @media print {
+    body.printing-dash > .container > *:not(#printArea) { display: none !important; }
+    body.printing-dash #printArea { display: block !important; }
+    #printArea { font-family: 'Plus Jakarta Sans', sans-serif; color: #000; }
+    #printArea h2 { font-size: 16px; margin-bottom: 4px; }
+    #printArea p { font-size: 11px; color: #444; margin-bottom: 10px; }
+    #printArea table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    #printArea th { background: #0d1a1a !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; padding: 6px 8px; text-align: left; }
+    #printArea td { padding: 6px 8px; border-bottom: 1px solid #ccc; }
+    #printArea .dash-total-row td { font-weight: 700; background: #f0fdf9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .print-ttd-wrap { margin-top: 28px; page-break-inside: avoid; }
+    .print-ttd-table { width: 100%; border-collapse: collapse; }
+    .print-ttd-table td { border: 1px solid #999; text-align: center; vertical-align: bottom; padding: 0; }
+    .print-ttd-box { height: 60px; }
+    .print-ttd-name { font-size: 11px; font-weight: 700; padding: 6px 4px 2px; }
+    .print-ttd-label { font-size: 9px; color: #555; padding-bottom: 6px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="container">
 
-  <!-- ── LOGIN SCREEN ── -->
   <div id="login-screen" class="login-screen">
     <div class="login-card">
       <div class="login-logo-wrap">
@@ -554,13 +233,8 @@
       </div>
       <div class="google-btn-wrap">
         <div class="g_id_signin"
-          data-type="standard"
-          data-size="large"
-          data-theme="outline"
-          data-text="signin_with"
-          data-shape="rectangular"
-          data-logo_alignment="left"
-          data-width="280">
+          data-type="standard" data-size="large" data-theme="outline"
+          data-text="signin_with" data-shape="rectangular" data-logo_alignment="left" data-width="280">
         </div>
       </div>
       <div class="checking-access" id="checking-access">
@@ -570,22 +244,17 @@
     </div>
   </div>
 
-  <!-- ── DENIED SCREEN ── -->
   <div id="denied-screen" class="denied-screen">
     <div class="denied-card">
       <div class="denied-icon">🚫</div>
       <h2>Akses Ditolak</h2>
       <p id="denied-msg">Email kamu tidak terdaftar.<br>Hubungi admin untuk mendapatkan akses.</p>
-      <button class="btn-logout" onclick="backToLogin()" style="padding:8px 20px; font-size:13px;">
-        ← Coba akun lain
-      </button>
+      <button class="btn-logout" onclick="backToLogin()" style="padding:8px 20px; font-size:13px;">← Coba akun lain</button>
     </div>
   </div>
 
-  <!-- ── MAIN AREA ── -->
   <div id="main-area" style="display:none;">
 
-    <!-- User Bar -->
     <div class="user-bar">
       <div class="user-bar-info">
         <div class="user-avatar" id="user-avatar"></div>
@@ -594,16 +263,36 @@
           <div class="user-bar-email" id="user-bar-email"></div>
         </div>
       </div>
-      <button class="btn-logout" onclick="backToLogin()">Keluar</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn-dash" id="btnDashboard" style="display:none" onclick="toggleDashboard()">📊 Dashboard</button>
+        <button class="btn-logout" onclick="backToLogin()">Keluar</button>
+      </div>
     </div>
 
-    <!-- Hero -->
-    <div class="hero">
+    <div id="dashboard-area" style="display:none">
+      <div class="hero" style="padding:20px 24px">
+        <h1 style="font-size:18px">📊 Dashboard <span>Rekap</span> Klaim Entertain</h1>
+        <p>Rekap per Region &amp; Bulan — untuk keperluan transfer ke rekening SM</p>
+      </div>
+      <div class="card">
+        <div class="dash-filters">
+          <select id="filterRegion" onchange="renderDashboard()"><option value="">Semua Region</option></select>
+          <select id="filterBulan" onchange="renderDashboard()"><option value="">Semua Bulan</option></select>
+        </div>
+        <div class="dash-actions">
+          <button class="btn-dash-action btn-print" onclick="printDashboard()">🖨️ Cetak</button>
+          <button class="btn-dash-action btn-excel" onclick="downloadExcelDashboard()">📥 Download Excel</button>
+        </div>
+        <div id="dashboardTableWrap" style="overflow-x:auto"></div>
+      </div>
+    </div>
+
+    <div id="printArea"></div>
+
+    <div class="hero" id="form-hero">
       <div class="hero-glow1"></div>
       <div class="hero-glow2"></div>
-      <div class="hero-top">
-        <img src="DR_FS_THEORY_MASTER_LOGO_R1-Teal.png" alt="Dr.FS Theory">
-      </div>
+      <div class="hero-top"><img src="DR_FS_THEORY_MASTER_LOGO_R1-Teal.png" alt="Dr.FS Theory"></div>
       <div class="hero-badge">🗂️ Klaim Entertain</div>
       <h1>Form <span>Klaim</span> Entertain</h1>
       <p>Isi form di bawah untuk mengajukan klaim entertain kamu</p>
@@ -611,7 +300,6 @@
 
     <div id="form-area">
 
-      <!-- Data User -->
       <div class="card">
         <div class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -624,8 +312,7 @@
             Memuat data user...
           </div>
           <div class="autocomplete-wrap" id="ac-wrap" style="display:none;">
-            <input type="text" id="namaUserInput" placeholder="Ketik nama user..."
-              autocomplete="off" oninput="onAcInput()" onfocus="onAcFocus()">
+            <input type="text" id="namaUserInput" placeholder="Ketik nama user..." autocomplete="off" oninput="onAcInput()" onfocus="onAcFocus()">
             <svg class="ac-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             <div class="ac-dropdown" id="ac-dropdown"></div>
           </div>
@@ -633,48 +320,23 @@
         </div>
 
         <div class="readonly-group">
-          <div class="readonly-item">
-            <label>ID User</label>
-            <input type="text" id="val-idUser" placeholder="—" readonly>
-          </div>
-          <div class="readonly-item">
-            <label>Spesialis</label>
-            <input type="text" id="val-spesialis" placeholder="—" readonly>
-          </div>
-          <div class="readonly-item">
-            <label>Nama Klinik</label>
-            <input type="text" id="val-namaKlinik" placeholder="—">
-          </div>
-          <div class="readonly-item">
-            <label>Posisi</label>
-            <input type="text" id="val-posisi" placeholder="—">
-          </div>
-          <div class="readonly-item">
-            <label>No Kontak</label>
-            <input type="tel" id="val-noKontak" placeholder="—">
-          </div>
-          <div class="readonly-item">
-            <label>District / Area</label>
-            <input type="text" id="val-districtArea" placeholder="—" readonly>
-          </div>
-          <div class="readonly-item">
-            <label>Region</label>
-            <input type="text" id="val-region" placeholder="—" readonly>
-          </div>
+          <div class="readonly-item"><label>ID User</label><input type="text" id="val-idUser" placeholder="—" readonly></div>
+          <div class="readonly-item"><label>Spesialis</label><input type="text" id="val-spesialis" placeholder="—" readonly></div>
+          <div class="readonly-item"><label>Nama Klinik</label><input type="text" id="val-namaKlinik" placeholder="—"></div>
+          <div class="readonly-item"><label>Posisi</label><input type="text" id="val-posisi" placeholder="—"></div>
+          <div class="readonly-item"><label>No Kontak</label><input type="tel" id="val-noKontak" placeholder="—"></div>
+          <div class="readonly-item"><label>District / Area</label><input type="text" id="val-districtArea" placeholder="—" readonly></div>
+          <div class="readonly-item"><label>Region</label><input type="text" id="val-region" placeholder="—" readonly></div>
         </div>
       </div>
 
-      <!-- Detail Klaim -->
       <div class="card">
         <div class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
           Detail klaim
         </div>
         <div class="grid-2" style="margin-bottom:14px;">
-          <div class="field">
-            <label>Tanggal <span>*</span></label>
-            <input type="date" id="tanggal">
-          </div>
+          <div class="field"><label>Tanggal <span>*</span></label><input type="date" id="tanggal"></div>
           <div class="field">
             <label>Bulan <span>*</span></label>
             <select id="bulan">
@@ -694,62 +356,48 @@
             <option>Kedukaan</option>
             <option>Kelahiran/Persalinan</option>
             <option>Ulang Tahun</option>
-             <option>Pembukaan Klinik</option>
+            <option>Pembukaan Klinik</option>
             <option>Makan Dengan User</option>
           </select>
         </div>
         <div class="grid-2">
           <div class="field">
             <label>Nominal (Rp) <span>*</span></label>
-            <input type="text" id="nominal" placeholder="0" inputmode="numeric"
-              oninput="formatAkunting(this, 'nominal-val')">
+            <input type="text" id="nominal" placeholder="0" inputmode="numeric" oninput="formatAkunting(this, 'nominal-val')">
             <input type="hidden" id="nominal-val">
           </div>
           <div class="field">
             <label>Average Sales / Bulan (Rp) <span>*</span></label>
-            <input type="text" id="averageSales" placeholder="0" inputmode="numeric"
-              oninput="formatAkunting(this, 'averageSales-val')">
+            <input type="text" id="averageSales" placeholder="0" inputmode="numeric" oninput="formatAkunting(this, 'averageSales-val')">
             <input type="hidden" id="averageSales-val">
           </div>
         </div>
       </div>
 
-      <!-- Detail Entertain -->
       <div class="card">
         <div class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
           Detail entertain
         </div>
-        <div class="field" style="margin-bottom:14px;">
-          <label>Tempat entertain <span>*</span></label>
-          <input type="text" id="tempatEntertain" placeholder="Nama restoran / tempat">
-        </div>
-        <div class="field" style="margin-bottom:14px;">
-          <label>Alamat entertain <span>*</span></label>
-          <input type="text" id="alamatEntertain" placeholder="Alamat lengkap tempat entertain">
-        </div>
-        <div class="field">
-          <label>Tujuan entertain <span>*</span></label>
-          <textarea id="tujuanEntertain" placeholder="Jelaskan tujuan kegiatan entertain ini..."></textarea>
-        </div>
+        <div class="field" style="margin-bottom:14px;"><label>Tempat entertain <span>*</span></label><input type="text" id="tempatEntertain" placeholder="Nama restoran / tempat"></div>
+        <div class="field" style="margin-bottom:14px;"><label>Alamat entertain <span>*</span></label><input type="text" id="alamatEntertain" placeholder="Alamat lengkap tempat entertain"></div>
+        <div class="field"><label>Tujuan entertain <span>*</span></label><textarea id="tujuanEntertain" placeholder="Jelaskan tujuan kegiatan entertain ini..."></textarea></div>
       </div>
 
-      <!-- Upload Foto -->
       <div class="card">
         <div class="card-title">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
           Bukti foto
         </div>
         <div class="upload-area" id="uploadArea">
-          <input type="file" id="fotoInput" accept="image/*" onchange="previewFoto(event)">
+          <input type="file" id="fotoInput" accept="image/*" multiple onchange="previewFoto(event)">
           <div class="upload-icon">📎</div>
           <div class="upload-text"><strong>Klik untuk upload</strong> atau drag &amp; drop foto di sini</div>
-          <div class="upload-text" style="margin-top:4px; font-size:12px;">JPG, PNG, HEIC — maks. 5MB</div>
-          <img id="fotoPreview" class="preview-img">
+          <div class="upload-text" style="margin-top:4px; font-size:12px;">JPG, PNG, HEIC — maks. 5MB per foto, boleh lebih dari 1 foto</div>
         </div>
+        <div class="preview-grid" id="fotoPreviewGrid"></div>
       </div>
 
-      <!-- Submit -->
       <button class="btn-submit" id="btnSubmit" onclick="submitForm()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2 11 13"/><path d="m22 2-7 20-4-9-9-4 20-7z"/></svg>
         <span id="btn-text">Kirim Klaim</span>
@@ -758,7 +406,6 @@
 
     </div>
 
-    <!-- Success Screen -->
     <div class="card success-screen" id="success-screen">
       <div class="success-icon">✅</div>
       <h2>Klaim berhasil dikirim!</h2>
@@ -775,9 +422,7 @@
 const API_URL = 'https://script.google.com/macros/s/AKfycbzJmpNoLYa2bPWNeJ5EdhQe46oHoJcFwv4B_bt9ubl6vu3zctCjxRgRUcNFZbOWLKkT/exec';
 
 let usersData     = [];
-let fotoBase64    = '';
-let fotoName      = '';
-let fotoMime      = '';
+let fotoList      = []; // {base64, name, mime}  — sekarang array, bukan 1 file lagi
 let acActiveIndex = -1;
 let currentEmail  = '';
 let currentName   = '';
@@ -811,6 +456,7 @@ async function checkAccess(email, name) {
       document.getElementById('main-area').style.display     = 'block';
       initFormDefaults();
       loadUsers();
+      checkDashboardAccess(email);
     } else {
       document.getElementById('denied-msg').innerHTML =
         `Email <strong>${email}</strong> tidak terdaftar untuk mengakses form ini.<br>Hubungi admin untuk mendapatkan akses.`;
@@ -953,21 +599,34 @@ function formatAkunting(input, hiddenId) {
   input.value = raw ? parseInt(raw, 10).toLocaleString('id-ID') : '';
 }
 
-// ── Foto ──
+// ── Foto (MULTI) ──
 function previewFoto(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showToast('Ukuran foto maksimal 5MB', 'error'); return; }
-  fotoName = file.name;
-  fotoMime = file.type;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    fotoBase64 = ev.target.result.split(',')[1];
-    const preview = document.getElementById('fotoPreview');
-    preview.src   = ev.target.result;
-    preview.style.display = 'block';
-  };
-  reader.readAsDataURL(file);
+  const files = Array.from(e.target.files || []);
+  e.target.value = ''; // reset supaya bisa pilih file yang sama lagi kalau perlu
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) { showToast(file.name + ' melebihi 5MB, dilewati', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = ev => {
+      fotoList.push({ base64: ev.target.result.split(',')[1], name: file.name, mime: file.type, dataUrl: ev.target.result });
+      renderFotoPreview();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderFotoPreview() {
+  const grid = document.getElementById('fotoPreviewGrid');
+  grid.innerHTML = fotoList.map((f, i) => `
+    <div class="preview-item">
+      <img src="${f.dataUrl}">
+      <button type="button" class="preview-remove" onclick="removeFoto(${i})">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeFoto(i) {
+  fotoList.splice(i, 1);
+  renderFotoPreview();
 }
 
 // ── Toast ──
@@ -1008,8 +667,8 @@ function validate() {
       return false;
     }
   }
-  if (!fotoBase64) {
-    showToast('Bukti foto wajib diupload', 'error');
+  if (fotoList.length === 0) {
+    showToast('Bukti foto wajib diupload (minimal 1)', 'error');
     document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth' });
     return false;
   }
@@ -1047,9 +706,8 @@ async function submitForm() {
     tujuanEntertain : document.getElementById('tujuanEntertain').value,
     emailPengisi    : currentEmail,
     namaPengisi     : currentName,
-    foto            : fotoBase64,
-    fotoName        : fotoName,
-    fotoMime        : fotoMime
+    // Sekarang array — bisa lebih dari 1 foto. Tiap item: {base64, name, mime}
+    fotos           : fotoList.map(f => ({ base64: f.base64, name: f.name, mime: f.mime }))
   };
 
   try {
@@ -1085,8 +743,153 @@ function resetForm() {
     document.getElementById(id).value = '';
   });
   initFormDefaults();
-  document.getElementById('fotoPreview').style.display = 'none';
-  fotoBase64 = ''; fotoName = ''; fotoMime = '';
+  fotoList = [];
+  renderFotoPreview();
+}
+
+// ══════════════════════════════════════════════════════════
+// DASHBOARD (khusus admin/finance) — rekap per Region & Bulan
+// ══════════════════════════════════════════════════════════
+let dashboardData = [];   // hasil mentah dari server
+let dashboardVisible = false;
+
+async function checkDashboardAccess(email) {
+  try {
+    const res  = await fetch(API_URL + '?action=checkDashboardAccess&email=' + encodeURIComponent(email));
+    const data = await res.json();
+    if (data.allowed) {
+      document.getElementById('btnDashboard').style.display = 'inline-block';
+    }
+  } catch(err) { /* diam saja kalau gagal cek, tombol tetap tersembunyi */ }
+}
+
+function toggleDashboard() {
+  dashboardVisible = !dashboardVisible;
+  document.getElementById('dashboard-area').style.display = dashboardVisible ? 'block' : 'none';
+  document.getElementById('form-hero').style.display       = dashboardVisible ? 'none' : 'block';
+  document.getElementById('form-area').style.display       = dashboardVisible ? 'none' : 'block';
+  document.getElementById('success-screen').style.display  = 'none';
+  if (dashboardVisible && dashboardData.length === 0) loadDashboard();
+}
+
+async function loadDashboard() {
+  document.getElementById('dashboardTableWrap').innerHTML = '<div class="loading-users"><div class="dot-loader"><span></span><span></span><span></span></div>Memuat data dashboard...</div>';
+  try {
+    const res  = await fetch(API_URL + '?action=getDashboardSummary&email=' + encodeURIComponent(currentEmail));
+    const data = await res.json();
+    if (data.error) { showToast(data.error, 'error'); return; }
+    dashboardData = data;
+    populateDashboardFilters();
+    renderDashboard();
+  } catch(err) {
+    document.getElementById('dashboardTableWrap').innerHTML = '<div class="dash-empty" style="color:#ef4444">Gagal memuat data dashboard.</div>';
+  }
+}
+
+function populateDashboardFilters() {
+  const regions = [...new Set(dashboardData.map(r => r.region))].sort();
+  const bulans  = [...new Set(dashboardData.map(r => r.bulan))];
+  bulans.sort((a,b) => bulanNames.indexOf(a) - bulanNames.indexOf(b));
+
+  const selRegion = document.getElementById('filterRegion');
+  const selBulan  = document.getElementById('filterBulan');
+  selRegion.innerHTML = '<option value="">Semua Region</option>' + regions.map(r => `<option value="${r}">${r}</option>`).join('');
+  selBulan.innerHTML  = '<option value="">Semua Bulan</option>'  + bulans.map(b => `<option value="${b}">${b}</option>`).join('');
+}
+
+function getFilteredDashboardData() {
+  const region = document.getElementById('filterRegion').value;
+  const bulan  = document.getElementById('filterBulan').value;
+  return dashboardData.filter(r => (!region || r.region === region) && (!bulan || r.bulan === bulan));
+}
+
+function formatRupiah(n) {
+  return 'Rp ' + Math.round(Number(n)||0).toLocaleString('id-ID');
+}
+
+function renderDashboard() {
+  const filtered = getFilteredDashboardData();
+  const wrap = document.getElementById('dashboardTableWrap');
+  if (!filtered.length) {
+    wrap.innerHTML = '<div class="dash-empty">Tidak ada data untuk filter ini.</div>';
+    return;
+  }
+  let totalNominal = 0, totalKlaim = 0;
+  const rows = filtered.map(r => {
+    totalNominal += r.totalNominal;
+    totalKlaim   += r.jumlahKlaim;
+    return `<tr>
+      <td>${r.region}</td><td>${r.bulan}</td>
+      <td>${r.jumlahKlaim}</td>
+      <td>${formatRupiah(r.totalNominal)}</td>
+      <td>${r.namaSM || '<span style="color:#ef4444">Belum ada data SM</span>'}</td>
+      <td>${r.noRekSM || '-'}</td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `<table class="dash-table">
+    <tr><th>Region</th><th>Bulan</th><th>Jml Klaim</th><th>Total Nominal</th><th>Nama SM</th><th>No. Rekening</th></tr>
+    ${rows}
+    <tr class="dash-total-row"><td colspan="2">TOTAL</td><td>${totalKlaim}</td><td>${formatRupiah(totalNominal)}</td><td colspan="2"></td></tr>
+  </table>`;
+}
+
+function printDashboard() {
+  const filtered = getFilteredDashboardData();
+  if (!filtered.length) { showToast('Tidak ada data untuk dicetak', 'error'); return; }
+  let totalNominal = 0, totalKlaim = 0;
+  const rows = filtered.map(r => {
+    totalNominal += r.totalNominal;
+    totalKlaim   += r.jumlahKlaim;
+    return `<tr><td>${r.region}</td><td>${r.bulan}</td><td>${r.jumlahKlaim}</td><td>${formatRupiah(r.totalNominal)}</td><td>${r.namaSM||'-'}</td><td>${r.noRekSM||'-'}</td></tr>`;
+  }).join('');
+
+  const region = document.getElementById('filterRegion').value || 'Semua Region';
+  const bulan  = document.getElementById('filterBulan').value || 'Semua Bulan';
+
+  document.getElementById('printArea').innerHTML = `
+    <h2>Rekap Klaim Entertain — Transfer ke SM</h2>
+    <p>Filter: ${region} · ${bulan} · Dicetak: ${new Date().toLocaleString('id-ID')}</p>
+    <table>
+      <tr><th>Region</th><th>Bulan</th><th>Jml Klaim</th><th>Total Nominal</th><th>Nama SM</th><th>No. Rekening</th></tr>
+      ${rows}
+      <tr class="dash-total-row"><td colspan="2">TOTAL</td><td>${totalKlaim}</td><td>${formatRupiah(totalNominal)}</td><td colspan="2"></td></tr>
+    </table>
+    <div class="print-ttd-wrap">
+      <table class="print-ttd-table">
+        <tr>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Staff Finance</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Jr Finance Manager</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Back Office Manager</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Direktur</div></td>
+        </tr>
+      </table>
+    </div>`;
+
+  document.body.classList.add('printing-dash');
+  window.print();
+  setTimeout(() => document.body.classList.remove('printing-dash'), 500);
+}
+
+function downloadExcelDashboard() {
+  const filtered = getFilteredDashboardData();
+  if (!filtered.length) { showToast('Tidak ada data untuk diexport', 'error'); return; }
+
+  // Sesuai permintaan: cuma 3 kolom, siap upload batch transfer bank.
+  const exportRows = filtered.map(r => ({
+    'Nama SM': r.namaSM || '',
+    'No. Rekening': r.noRekSM || '',
+    'Nominal': r.totalNominal
+  }));
+
+  const ws = XLSX.utils.json_to_sheet(exportRows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Transfer SM');
+
+  const region = document.getElementById('filterRegion').value || 'SemuaRegion';
+  const bulan  = document.getElementById('filterBulan').value || 'SemuaBulan';
+  const fileName = `Transfer_SM_${region}_${bulan}`.replace(/\s+/g,'_') + '.xlsx';
+  XLSX.writeFile(wb, fileName);
 }
 </script>
 </body>
