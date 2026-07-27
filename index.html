@@ -197,7 +197,7 @@
   /* ── Mode Cetak ── */
   #printArea { display: none; }
   @media print {
-    body.printing-dash > .container > *:not(#printArea) { display: none !important; }
+    body.printing-dash > .container { display: none !important; }
     body.printing-dash #printArea { display: block !important; }
     #printArea { font-family: 'Plus Jakarta Sans', sans-serif; color: #000; }
     #printArea h2 { font-size: 16px; margin-bottom: 4px; }
@@ -287,7 +287,6 @@
       </div>
     </div>
 
-    <div id="printArea"></div>
 
     <div class="hero" id="form-hero">
       <div class="hero-glow1"></div>
@@ -415,6 +414,8 @@
 
   </div>
 </div>
+
+<div id="printArea"></div>
 
 <div class="toast" id="toast"></div>
 
@@ -858,17 +859,18 @@ function printDashboard() {
     <div class="print-ttd-wrap">
       <table class="print-ttd-table">
         <tr>
-          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Staff Finance</div></td>
-          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Jr Finance Manager</div></td>
-          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Back Office Manager</div></td>
-          <td><div class="print-ttd-box"></div><div class="print-ttd-name">&nbsp;</div><div class="print-ttd-label">Direktur</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">Rizky Adrian / Meike Khumarga</div><div class="print-ttd-label">Dibuat<br>Staff Finance</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">Remon Slamet</div><div class="print-ttd-label">Mengetahui I<br>Jr. Finance Manager</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">Mela Yufika</div><div class="print-ttd-label">Mengetahui II<br>Back Office Manager</div></td>
+          <td><div class="print-ttd-box"></div><div class="print-ttd-name">Ronny Manuel</div><div class="print-ttd-label">Menyetujui<br>Direktur</div></td>
         </tr>
       </table>
     </div>`;
 
   document.body.classList.add('printing-dash');
   window.print();
-  setTimeout(() => document.body.classList.remove('printing-dash'), 500);
+  window.onafterprint = () => { document.body.classList.remove('printing-dash'); window.onafterprint = null; };
+  setTimeout(() => document.body.classList.remove('printing-dash'), 2000); // fallback kalau afterprint tidak ke-trigger
 }
 
 function downloadExcelDashboard() {
