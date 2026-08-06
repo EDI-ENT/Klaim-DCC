@@ -447,10 +447,14 @@ async function checkAccess(email, name) {
     const res  = await fetch(API_URL + '?action=checkAccess&email=' + encodeURIComponent(email));
     const data = await res.json();
     if (data.allowed) {
+      // Pakai Nama Tim dari sheet "Data Tim" (kolom A) — bukan nama akun Google pribadi,
+      // supaya "Nama Pengisi" konsisten dengan database resmi tim. Fallback ke nama Google
+      // kalau entah kenapa namaTim kosong (jaga-jaga saja).
+      var resolvedName = (data.namaTim && data.namaTim.trim()) ? data.namaTim.trim() : name;
       currentEmail = email;
-      currentName  = name;
-      document.getElementById('user-avatar').textContent    = name.charAt(0).toUpperCase();
-      document.getElementById('user-bar-name').textContent  = name;
+      currentName  = resolvedName;
+      document.getElementById('user-avatar').textContent    = resolvedName.charAt(0).toUpperCase();
+      document.getElementById('user-bar-name').textContent  = resolvedName;
       document.getElementById('user-bar-email').textContent = email;
       document.getElementById('login-screen').style.display  = 'none';
       document.getElementById('denied-screen').style.display = 'none';
@@ -849,7 +853,7 @@ function printDashboard() {
   const bulan  = document.getElementById('filterBulan').value || 'Semua Bulan';
 
   document.getElementById('printArea').innerHTML = `
-    <h2>Rekap Klaim Entertain PT Efes Dermacos Indonesia</h2>
+    <h2>Rekap Klaim Entertain — Transfer ke SM</h2>
     <p>Filter: ${region} · ${bulan} · Dicetak: ${new Date().toLocaleString('id-ID')}</p>
     <table>
       <tr><th>Region</th><th>Bulan</th><th>Jml Klaim</th><th>Total Nominal</th><th>Nama SM</th><th>No. Rekening</th></tr>
