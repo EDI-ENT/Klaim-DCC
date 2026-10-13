@@ -543,11 +543,6 @@ function renderDups(){
     `<table class="t"><tr><th>Tanggal</th><th>User</th><th>Kategori</th><th class="num">Nominal</th><th class="num">Muncul</th><th>Pengisi</th></tr>` +
     d.map(x => `<tr><td>${esc(x[0].tanggal)}</td><td><b>${esc(x[0].namaUser)}</b></td><td>${esc(x[0].kategori)}</td><td class="num">${rp(x[0].nominal)}</td><td class="num"><span class="pill">${x.length}×</span></td><td>${esc([...new Set(x.map(r => r.namaPengisi || '-'))].join(', '))}</td></tr>`).join('') + '</table>';
 }
-function renderInsight(){
-  renderRatio(); renderOutliers(); renderDups();
-  document.getElementById('spesTable').innerHTML = simpleAggTable(F, r => r.spesialis, 'Spesialis');
-  document.getElementById('pengisiTable').innerHTML = simpleAggTable(F, r => r.namaPengisi || '(Tidak tercatat)', 'Pengisi');
-}
 
 /* ───────── tabs & export ───────── */
 document.getElementById('tabs').addEventListener('click', e => {
