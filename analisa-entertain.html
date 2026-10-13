@@ -278,25 +278,50 @@ async function checkAccess(name){
 }
 
 /* ───────── data ───────── */
+function parseTanggal(t){
+  t = String(t || '').trim();
+  let m = t.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) return { y:+m[1], mo:+m[2]-1 };
+  m = t.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})/);
+  if (m) return { y:+m[3], mo:+m[2]-1 };
+  const d = new Date(t);
+  return isNaN(d) ? null : { y:d.getFullYear(), mo:d.getMonth() };
+}
+
+function showLoadError(msg){
+  const el = document.getElementById('loading');
+  el.style.display = 'block';
+  el.innerHTML = '<b style="color:var(--error)">' + esc(msg) + '</b>';
+  document.querySelectorAll('.tab, .filters, #tabs').forEach(x => x.style.display = 'none');
+}
+
 async function loadData(){
   try {
-    const d = await (await fetch(API_URL + '?action=getAnalytics&email=' + encodeURIComponent(email))).json();
-    if (d.error) { toast(d.error); document.getElementById('loading').textContent = d.error; return; }
-    // Bulan diambil dari kolom "Bulan" (sama seperti dashboard rekap finance), tahun dari kolom Tanggal.
-    RAW = d.map(r => ({
-      ...r,
-      year: parseInt((r.tanggal || '').slice(0,4), 10) || null,
-      m: BULAN.indexOf(r.bulan),
-      key: r.idUser || r.namaUser
-    }));
+    const res = await fetch(API_URL + '?action=getAnalytics&email=' + encodeURIComponent(email));
+    const d = await res.json();
+
+    if (d && d.error)       return showLoadError(d.error === 'Action tidak dikenali'
+        ? 'Apps Script belum di-deploy dengan action getAnalytics (deploy "New version").' : d.error);
+    if (!Array.isArray(d))  return showLoadError('Format data dari server tidak dikenali.');
+    if (!d.length)          return showLoadError('Sheet "Klaim" belum berisi data.');
+
+    const bulanLower = BULAN.map(b => b.toLowerCase());
+    RAW = d.map(r => {
+      const t = parseTanggal(r.tanggal);
+      const idx = bulanLower.indexOf(String(r.bulan || '').trim().toLowerCase());
+      return { ...r,
+        year: t ? t.y : null,
+        m: idx >= 0 ? idx : (t ? t.mo : -1),
+        key: r.idUser || r.namaUser };
+    });
+
     document.getElementById('loading').style.display = 'none';
     buildFilters();
     refresh();
   } catch(e) {
-    document.getElementById('loading').textContent = 'Gagal memuat data. Pastikan Apps Script sudah di-deploy ulang dengan action getAnalytics.';
+    showLoadError('Gagal memuat data: ' + e.message + '. Cek koneksi dan deployment Apps Script.');
   }
 }
-
 function buildFilters(){
   const years = [...new Set(RAW.map(r => r.year).filter(Boolean))].sort((a,b)=>b-a);
   const regions = [...new Set(RAW.map(r => r.region))].sort();
