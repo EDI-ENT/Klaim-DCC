@@ -139,12 +139,16 @@
       <p>Siapa yang paling sering dan paling besar di-entertain, region mana yang terbesar, dan bagaimana tren bulan ke bulan.</p>
     </div>
 
-    <div class="filters">
+     <div class="filters">
+      <div class="f"><label>Tahun</label><select id="fYear" onchange="refresh()"></select></div>
+      <div class="f"><label>Region</label><select id="fRegion" onchange="refresh()"></select></div>
+      <div class="f"><label>Kategori</label><select id="fKat" onchange="refresh()"></select></div>
       <div class="f"><label>Tim (pengisi klaim)</label><select id="fTim" onchange="refresh()"></select></div>
       <div class="f"><label>Cari / pilih user</label>
-      <input type="text" id="fUser" list="dlUser" placeholder="Ketik nama dokter…" oninput="refresh()">
-      <datalist id="dlUser"></datalist>
+        <input type="text" id="fUser" list="dlUser" placeholder="Ketik nama dokter…" oninput="refresh()">
+        <datalist id="dlUser"></datalist>
       </div>
+    </div>
 
     <div class="tabs" id="tabs">
       <button class="tab-btn on" data-tab="t-ringkas">Ringkasan</button>
