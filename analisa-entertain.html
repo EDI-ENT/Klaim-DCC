@@ -45,8 +45,8 @@
   .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;background:#fff;border:1px solid #e8f5f3;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
   .filters .f{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px}
   .filters label{font-size:11px;font-weight:600;color:var(--muted)}
-  select,input[type=number]{width:100%;padding:9px 12px;font-size:13px;font-family:inherit;background:#fafafa;border:1px solid var(--border);border-radius:10px;color:var(--text);outline:none}
-  select:focus,input[type=number]:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);background:#fff}
+  select,input[type=number],input[type=text]{width:100%;padding:9px 12px;font-size:13px;font-family:inherit;background:#fafafa;border:1px solid var(--border);border-radius:10px;color:var(--text);outline:none}
+    select:focus,input[type=number]:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);background:#fff}
 
   /* tabs */
   .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}
@@ -140,10 +140,11 @@
     </div>
 
     <div class="filters">
-      <div class="f"><label>Tahun</label><select id="fYear" onchange="refresh()"></select></div>
-      <div class="f"><label>Region</label><select id="fRegion" onchange="refresh()"></select></div>
-      <div class="f"><label>Kategori</label><select id="fKat" onchange="refresh()"></select></div>
-    </div>
+      <div class="f"><label>Tim (pengisi klaim)</label><select id="fTim" onchange="refresh()"></select></div>
+      <div class="f"><label>Cari / pilih user</label>
+      <input type="text" id="fUser" list="dlUser" placeholder="Ketik nama dokter…" oninput="refresh()">
+      <datalist id="dlUser"></datalist>
+      </div>
 
     <div class="tabs" id="tabs">
       <button class="tab-btn on" data-tab="t-ringkas">Ringkasan</button>
@@ -241,6 +242,7 @@ const charts = {};
 
 /* ───────── helpers ───────── */
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nk = s => String(s || '').trim().toUpperCase().replace(/\s+/g, ' ');
 const rp  = n => 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID');
 const short = n => { n = Number(n)||0; const a = Math.abs(n);
   if (a >= 1e9) return (n/1e9).toFixed(1).replace('.',',') + ' M';
@@ -320,9 +322,9 @@ async function loadData(){
       const idx = bl.indexOf(String(r.bulan || '').trim().toLowerCase());
       return { ...r, year: t ? t.y : null, m: idx >= 0 ? idx : (t ? t.mo : -1), key: r.idUser || r.namaUser };
     });
-    SALES = Array.isArray(s)
-      ? s.map(r => ({ key: r.idUser, year: r.year, m: r.m, sales: r.sales }))
-         .filter(r => r.key && r.year && r.m >= 0)
+        SALES = Array.isArray(s)
+      ? s.map(r => ({ idN: nk(r.idUser), nameN: nk(r.namaUser), year: r.year, m: r.m, sales: r.sales }))
+         .filter(r => (r.idN || r.nameN) && r.year && r.m >= 0)
       : [];
 
     document.getElementById('loading').style.display = 'none';
@@ -340,13 +342,20 @@ function buildFilters(){
   if (years.length) document.getElementById('fYear').value = String(years[0]);
   document.getElementById('fRegion').innerHTML = '<option value="">Semua region</option>' + regions.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('');
   document.getElementById('fKat').innerHTML = '<option value="">Semua kategori</option>' + kats.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+    const tims = [...new Set(RAW.map(r => r.namaPengisi).filter(Boolean))].sort();
+  document.getElementById('fTim').innerHTML = '<option value="">Semua tim</option>' + tims.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('');
+  const names = [...new Set(RAW.map(r => r.namaUser).filter(Boolean))].sort();
+  document.getElementById('dlUser').innerHTML = names.map(n => `<option value="${esc(n)}">`).join('');
 }
 
 function refresh(){
-  const y = document.getElementById('fYear').value;
+  const y  = document.getElementById('fYear').value;
   const rg = document.getElementById('fRegion').value;
   const kt = document.getElementById('fKat').value;
-  FNY = RAW.filter(r => (!rg || r.region === rg) && (!kt || r.kategori === kt));
+  const tm = document.getElementById('fTim').value;
+  const q  = document.getElementById('fUser').value.trim().toLowerCase();
+  FNY = RAW.filter(r => (!rg || r.region === rg) && (!kt || r.kategori === kt)
+    && (!tm || r.namaPengisi === tm) && (!q || String(r.namaUser).toLowerCase().includes(q)));
   F = FNY.filter(r => !y || String(r.year) === y);
   renderAll();
 }
@@ -561,27 +570,38 @@ function exportData(){
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Data Klaim');
   XLSX.writeFile(wb, 'Data_Klaim_Entertain.xlsx');
 }
-  function renderReal(){
+  
+ function renderReal(){
   const y = document.getElementById('fYear').value;
   const min = parseFloat(document.getElementById('realMin').value) || 0;
   const users = aggUsers(F);
-  const keys = new Set(users.map(u => u.key));
-  const S = SALES.filter(r => keys.has(r.key) && (!y || String(r.year) === y));
+  const keyset = new Set(users.map(u => nk(u.key)));
+  const S = SALES.filter(r => (keyset.has(r.idN) || keyset.has(r.nameN)) && (!y || String(r.year) === y));
 
   const salesBy = new Map();
-  S.forEach(r => salesBy.set(r.key, (salesBy.get(r.key) || 0) + r.sales));
+  S.forEach(r => {
+    const k = keyset.has(r.idN) ? r.idN : r.nameN;
+    const o = salesBy.get(k) || { total: 0, months: new Set() };
+    o.total += r.sales; o.months.add(r.year * 100 + r.m);
+    salesBy.set(k, o);
+  });
+
   const rows = users.map(u => {
-    const s = salesBy.get(u.key) || 0;
-    return { ...u, sales: s, ratio: s ? u.nominal / s * 100 : null };
+    const o = salesBy.get(nk(u.key));
+    const s = o ? o.total : 0, n = o ? o.months.size : 0;
+    return { ...u, sales: s, months: n, ratio: s ? u.nominal / s * 100 : null };
   }).filter(u => u.ratio === null || u.ratio >= min)
     .sort((a,b) => (b.ratio ?? 1e9) - (a.ratio ?? 1e9)).slice(0, 50);
 
   document.getElementById('realTable').innerHTML = !rows.length
     ? '<div class="empty">Tidak ada data.</div>'
-    : `<table class="t"><tr><th>Dokter / user</th><th class="num">Entertain</th><th class="num">Sales</th><th class="num">Rasio</th></tr>` +
+    : `<table class="t"><tr><th>Dokter / user</th><th class="num">Entertain</th>
+        <th class="num">Sales <span style="font-weight:400;opacity:.7">(jml bulan)</span></th>
+        <th class="num">Rata-rata/bln</th><th class="num">Rasio</th></tr>` +
       rows.map(u => `<tr><td><b>${esc(u.nama)}</b><div class="sub">${esc(u.spes)} · ${esc(u.region)} · ${u.count} klaim</div></td>
         <td class="num">${rp(u.nominal)}</td>
-        <td class="num">${u.sales ? rp(u.sales) : '<span class="flat">belum ada data sales</span>'}</td>
+        <td class="num">${u.sales ? rp(u.sales) + `<div class="sub">${u.months} bulan</div>` : '<span class="flat">belum ada data sales</span>'}</td>
+        <td class="num">${u.months ? rp(u.sales / u.months) : '-'}</td>
         <td class="num">${u.ratio === null ? '-' : `<span class="pill">${u.ratio.toFixed(1).replace('.',',')}%</span>`}</td></tr>`).join('') + '</table>';
 
   const ent = timeline(F);
