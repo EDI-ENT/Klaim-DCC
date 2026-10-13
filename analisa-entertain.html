@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analisa Klaim Entertain — Dr.FS Theory</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --teal:#0d9488; --teal-light:#2dd4bf; --purple:#8b5cf6; --error:#ef4444; --ok:#16a34a;
+    --text:#1a1a2e; --muted:#6b7280; --border:#e0f2f0; --radius:12px;
+    --shadow:0 2px 16px rgba(13,148,136,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',sans-serif;background:linear-gradient(160deg,#f0f4ff 0%,#fdf0ff 50%,#f0fff8 100%);min-height:100vh;padding:24px 16px 56px;color:var(--text)}
+  .container{max-width:1100px;margin:0 auto}
+
+  /* login / denied */
+  .center-screen{display:flex;align-items:center;justify-content:center;min-height:85vh}
+  .box{background:#fff;border-radius:20px;border:1px solid #e8f5f3;box-shadow:0 8px 40px rgba(13,148,136,.12);padding:40px 32px;max-width:420px;width:100%;text-align:center}
+  .box h2{font-size:20px;margin-bottom:8px}
+  .box p{font-size:13px;color:var(--muted);margin-bottom:24px;line-height:1.6}
+  .gwrap{display:flex;justify-content:center}
+
+  /* top bar */
+  .user-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid #e8f5f3;border-radius:14px;padding:10px 16px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .ub-info{display:flex;align-items:center;gap:10px}
+  .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--purple));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+  .ub-name{font-weight:600;font-size:13px} .ub-mail{color:var(--muted);font-size:11px}
+  .btn{padding:7px 14px;font-size:12px;font-weight:600;font-family:inherit;border-radius:8px;cursor:pointer;border:1px solid transparent;white-space:nowrap}
+  .btn-ghost{background:rgba(139,92,246,.1);color:var(--purple);border-color:rgba(139,92,246,.2)}
+  .btn-out{background:rgba(239,68,68,.08);color:var(--error);border-color:rgba(239,68,68,.15)}
+  .btn-xls{background:var(--ok);color:#fff}
+
+  .hero{background:#0d1a1a;border-radius:20px;padding:26px 24px;margin-bottom:16px;position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;top:-60px;right:-40px;width:240px;height:240px;background:radial-gradient(ellipse,rgba(13,148,136,.3),transparent 70%)}
+  .hero::after{content:'';position:absolute;bottom:-70px;left:-40px;width:220px;height:220px;background:radial-gradient(ellipse,rgba(139,92,246,.25),transparent 70%)}
+  .hero h1{font-size:22px;color:#fff;position:relative;z-index:1;letter-spacing:-.4px}
+  .hero p{font-size:13px;color:#7fb0b0;margin-top:6px;position:relative;z-index:1}
+
+  /* filters */
+  .filters{display:flex;gap:10px;flex-wrap:wrap;align-items:end;background:#fff;border:1px solid #e8f5f3;border-radius:16px;padding:14px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .filters .f{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px}
+  .filters label{font-size:11px;font-weight:600;color:var(--muted)}
+  select,input[type=number]{width:100%;padding:9px 12px;font-size:13px;font-family:inherit;background:#fafafa;border:1px solid var(--border);border-radius:10px;color:var(--text);outline:none}
+  select:focus,input[type=number]:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(13,148,136,.1);background:#fff}
+
+  /* tabs */
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}
+  .tab-btn{padding:9px 16px;font-size:13px;font-weight:600;font-family:inherit;background:#fff;color:var(--muted);border:1px solid #e8f5f3;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .tab-btn.on{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .tab{display:none} .tab.on{display:block}
+
+  /* cards */
+  .card{background:#fff;border-radius:16px;border:1px solid #e8f5f3;box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+  .card h3{font-size:14px;font-weight:700;margin-bottom:3px}
+  .card .hint{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+  .kpi{background:#fff;border:1px solid #e8f5f3;border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+  .kpi .l{font-size:11px;color:var(--muted);font-weight:600}
+  .kpi .v{font-size:20px;font-weight:700;margin-top:4px;letter-spacing:-.3px}
+  .kpi .s{font-size:11px;color:var(--muted);margin-top:2px}
+  .kpi.main .v{color:var(--teal)}
+  .chart-box{position:relative;height:300px}
+  .chart-box.tall{height:360px}
+
+  /* tables */
+  .scroll{overflow-x:auto}
+  table.t{width:100%;border-collapse:collapse;font-size:13px}
+  table.t th{background:#0d1a1a;color:#fff;padding:8px 10px;text-align:left;font-size:12px;font-weight:600;white-space:nowrap}
+  table.t td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+  table.t tr:hover td{background:#f8fefc}
+  table.t .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  table.t th.num{text-align:right}
+  table.t tr.total td{font-weight:700;background:#f0fdf9}
+  .sub{font-size:11px;color:var(--muted);margin-top:1px;font-weight:400}
+  .bar-cell{width:34%;min-width:80px}
+  .bar{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--purple))}
+  .up{color:var(--error);font-weight:600} .down{color:var(--ok);font-weight:600} .flat{color:var(--muted)}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;background:#fef2f2;color:var(--error)}
+  .empty{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+  .inline-ctl{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+  .inline-ctl input{width:90px}
+  .inline-ctl select{width:auto}
+
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--error);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;display:none;z-index:99}
+
+  @media(max-width:760px){.grid2{grid-template-columns:1fr}.chart-box{height:260px}}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="login" class="center-screen">
+    <div class="box">
+      <h2>Analisa Klaim Entertain</h2>
+      <p>Khusus admin / finance. Masuk dengan akun Google yang terdaftar di sheet "Admin Dashboard".</p>
+      <div id="g_id_onload"
+        data-client_id="211516483064-fei3jov1kh4dbh432evtpli2h6nkqcti.apps.googleusercontent.com"
+        data-callback="handleCredential" data-auto_prompt="false"></div>
+      <div class="gwrap" id="gbtn">
+        <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline"
+          data-text="signin_with" data-shape="rectangular" data-logo_alignment="left" data-width="280"></div>
+      </div>
+      <div id="checking" style="display:none;font-size:13px;color:var(--muted)">Memeriksa akses…</div>
+    </div>
+  </div>
+
+  <!-- DENIED -->
+  <div id="denied" class="center-screen" style="display:none">
+    <div class="box">
+      <h2 style="color:var(--error)">Akses ditolak</h2>
+      <p id="denied-msg">Email kamu belum terdaftar sebagai admin dashboard.</p>
+      <button class="btn btn-out" onclick="location.reload()">Coba akun lain</button>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app" style="display:none">
+    <div class="user-bar">
+      <div class="ub-info">
+        <div class="avatar" id="avatar"></div>
+        <div><div class="ub-name" id="ub-name"></div><div class="ub-mail" id="ub-mail"></div></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-xls" onclick="exportData()">Download data (Excel)</button>
+        <button class="btn btn-out" onclick="location.reload()">Keluar</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <h1>Analisa Klaim Entertain</h1>
+      <p>Siapa yang paling sering dan paling besar di-entertain, region mana yang terbesar, dan bagaimana tren bulan ke bulan.</p>
+    </div>
+
+    <div class="filters">
+      <div class="f"><label>Tahun</label><select id="fYear" onchange="refresh()"></select></div>
+      <div class="f"><label>Region</label><select id="fRegion" onchange="refresh()"></select></div>
+      <div class="f"><label>Kategori</label><select id="fKat" onchange="refresh()"></select></div>
+    </div>
+
+    <div class="tabs" id="tabs">
+      <button class="tab-btn on" data-tab="t-ringkas">Ringkasan</button>
+      <button class="tab-btn" data-tab="t-user">Dokter / User</button>
+      <button class="tab-btn" data-tab="t-region">Region</button>
+      <button class="tab-btn" data-tab="t-waktu">Bulanan &amp; Tahunan</button>
+      <button class="tab-btn" data-tab="t-insight">Insight tambahan</button>
+    </div>
+
+    <div id="loading" class="loading">Memuat data klaim…</div>
+
+    <!-- RINGKASAN -->
+    <div class="tab on" id="t-ringkas">
+      <div class="kpis" id="kpis"></div>
+      <div class="grid2">
+        <div class="card"><h3>Nominal per kategori</h3><div class="hint">Jenis entertain mana yang menyerap biaya terbesar.</div><div class="chart-box"><canvas id="cKat"></canvas></div></div>
+        <div class="card"><h3>Tren nominal bulanan</h3><div class="hint">Total nominal (batang) dan jumlah klaim (garis).</div><div class="chart-box"><canvas id="cTrenMini"></canvas></div></div>
+      </div>
+      <div class="grid2">
+        <div class="card"><h3>5 user dengan nominal terbesar</h3><div class="scroll" id="miniNominal"></div></div>
+        <div class="card"><h3>5 region dengan nominal terbesar</h3><div class="scroll" id="miniRegion"></div></div>
+      </div>
+    </div>
+
+    <!-- USER -->
+    <div class="tab" id="t-user">
+      <div class="inline-ctl">Tampilkan
+        <select id="topN" onchange="renderUsers()"><option>10</option><option selected>20</option><option>50</option><option>100</option></select> teratas
+      </div>
+      <div class="grid2">
+        <div class="card"><h3>Paling sering di-entertain</h3><div class="hint">Diurutkan dari jumlah klaim terbanyak.</div><div class="scroll" id="rankCount"></div></div>
+        <div class="card"><h3>Nominal entertain terbesar</h3><div class="hint">Diurutkan dari total nominal terbesar.</div><div class="scroll" id="rankNominal"></div></div>
+      </div>
+    </div>
+
+    <!-- REGION -->
+    <div class="tab" id="t-region">
+      <div class="card"><h3>Perbandingan region</h3><div class="hint">Nominal per region pada filter yang dipilih.</div><div class="chart-box tall"><canvas id="cRegion"></canvas></div></div>
+      <div class="card"><h3>Rincian per region</h3><div class="scroll" id="regionTable"></div></div>
+      <div class="card"><h3>Per district / area</h3><div class="hint">Zoom lebih dalam: area mana di dalam region yang paling banyak mengeluarkan entertain.</div><div class="scroll" id="districtTable"></div></div>
+    </div>
+
+    <!-- WAKTU -->
+    <div class="tab" id="t-waktu">
+      <div class="card"><h3>Tren bulanan</h3><div class="hint">Mengikuti filter tahun, region, dan kategori di atas.</div><div class="chart-box tall"><canvas id="cTren"></canvas></div></div>
+      <div class="card"><h3>Perbandingan bulan per bulan (MoM)</h3>
+        <div class="hint">Dibandingkan dengan bulan sebelumnya. Merah = biaya naik, hijau = biaya turun.</div>
+        <div class="scroll" id="momTable"></div></div>
+      <div class="card"><h3>Perbandingan antar tahun, bulan yang sama</h3>
+        <div class="hint">Satu garis per tahun. Berguna melihat pola musiman (misalnya Lebaran, akhir tahun). Mengikuti filter region dan kategori, mengabaikan filter tahun.</div>
+        <div class="chart-box tall"><canvas id="cYoY"></canvas></div></div>
+      <div class="card"><h3>Rekap tahunan</h3><div class="hint">Mengikuti filter region dan kategori, mengabaikan filter tahun.</div><div class="scroll" id="yearTable"></div></div>
+    </div>
+
+    <!-- INSIGHT -->
+    <div class="tab" id="t-insight">
+      <div class="card"><h3>Rasio entertain terhadap average sales</h3>
+        <div class="hint">Total nominal entertain user dibagi average sales per bulan (data klaim terbaru user). Rasio tinggi berarti biaya entertain besar dibanding kontribusi sales, jadi layak ditinjau.</div>
+        <div class="inline-ctl">Tampilkan user dengan rasio minimal <input type="number" id="ratioMin" value="10" min="0" step="1" oninput="renderRatio()"> %</div>
+        <div class="scroll" id="ratioTable"></div></div>
+      <div class="card"><h3>Klaim dengan nominal tidak wajar</h3>
+        <div class="hint">Klaim yang nominalnya di atas rata-rata + 2 simpangan baku di kategorinya (hanya kategori dengan minimal 5 klaim).</div>
+        <div class="scroll" id="outlierTable"></div></div>
+      <div class="card"><h3>Kemungkinan klaim ganda</h3>
+        <div class="hint">User, tanggal, kategori, dan nominal yang sama muncul lebih dari sekali. Cek dulu ke pengisi sebelum dibayar.</div>
+        <div class="scroll" id="dupTable"></div></div>
+      <div class="grid2">
+        <div class="card"><h3>Per spesialis</h3><div class="scroll" id="spesTable"></div></div>
+        <div class="card"><h3>Per pengisi klaim (tim)</h3><div class="scroll" id="pengisiTable"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+const API_URL = 'https://script.google.com/macros/s/AKfycbzJmpNoLYa2bPWNeJ5EdhQe46oHoJcFwv4B_bt9ubl6vu3zctCjxRgRUcNFZbOWLKkT/exec';
+const BULAN = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+const BS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const PALETTE = ['#0d9488','#8b5cf6','#2dd4bf','#f59e0b','#ef4444','#3b82f6','#ec4899','#84cc16'];
+
+let RAW = [];   // semua klaim
+let F   = [];   // terfilter (tahun + region + kategori)
+let FNY = [];   // terfilter tanpa tahun (region + kategori)
+let email = '';
+const charts = {};
+
+/* ───────── helpers ───────── */
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rp  = n => 'Rp ' + Math.round(Number(n) || 0).toLocaleString('id-ID');
+const short = n => { n = Number(n)||0; const a = Math.abs(n);
+  if (a >= 1e9) return (n/1e9).toFixed(1).replace('.',',') + ' M';
+  if (a >= 1e6) return (n/1e6).toFixed(1).replace('.',',') + ' jt';
+  if (a >= 1e3) return Math.round(n/1e3) + ' rb';
+  return String(Math.round(n)); };
+const pct = (a, b) => b ? (a - b) / b * 100 : null;
+function toast(msg){ const t = document.getElementById('toast'); t.textContent = msg; t.style.display = 'block'; setTimeout(()=>t.style.display='none', 3500); }
+function groupBy(arr, keyFn){ const m = new Map(); arr.forEach(r => { const k = keyFn(r); if(!m.has(k)) m.set(k, []); m.get(k).push(r); }); return m; }
+const sum = (arr, f) => arr.reduce((s, r) => s + f(r), 0);
+function mk(id, cfg){ if (charts[id]) charts[id].destroy(); charts[id] = new Chart(document.getElementById(id), cfg); }
+Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+Chart.defaults.font.size = 12;
+
+/* ───────── login ───────── */
+function handleCredential(resp){
+  const p = JSON.parse(atob(resp.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/')));
+  email = p.email || '';
+  document.getElementById('gbtn').style.display = 'none';
+  document.getElementById('checking').style.display = 'block';
+  checkAccess(p.name || email);
+}
+async function checkAccess(name){
+  try {
+    const r = await (await fetch(API_URL + '?action=checkDashboardAccess&email=' + encodeURIComponent(email))).json();
+    if (!r.allowed) {
+      document.getElementById('denied-msg').innerHTML = 'Email <strong>' + esc(email) + '</strong> belum terdaftar sebagai admin dashboard.';
+      document.getElementById('login').style.display = 'none';
+      document.getElementById('denied').style.display = 'flex';
+      return;
+    }
+    document.getElementById('avatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('ub-name').textContent = name;
+    document.getElementById('ub-mail').textContent = email;
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } catch(e) {
+    toast('Gagal memeriksa akses. Cek koneksi.');
+    document.getElementById('gbtn').style.display = 'flex';
+    document.getElementById('checking').style.display = 'none';
+  }
+}
+
+/* ───────── data ───────── */
+async function loadData(){
+  try {
+    const d = await (await fetch(API_URL + '?action=getAnalytics&email=' + encodeURIComponent(email))).json();
+    if (d.error) { toast(d.error); document.getElementById('loading').textContent = d.error; return; }
+    // Bulan diambil dari kolom "Bulan" (sama seperti dashboard rekap finance), tahun dari kolom Tanggal.
+    RAW = d.map(r => ({
+      ...r,
+      year: parseInt((r.tanggal || '').slice(0,4), 10) || null,
+      m: BULAN.indexOf(r.bulan),
+      key: r.idUser || r.namaUser
+    }));
+    document.getElementById('loading').style.display = 'none';
+    buildFilters();
+    refresh();
+  } catch(e) {
+    document.getElementById('loading').textContent = 'Gagal memuat data. Pastikan Apps Script sudah di-deploy ulang dengan action getAnalytics.';
+  }
+}
+
+function buildFilters(){
+  const years = [...new Set(RAW.map(r => r.year).filter(Boolean))].sort((a,b)=>b-a);
+  const regions = [...new Set(RAW.map(r => r.region))].sort();
+  const kats = [...new Set(RAW.map(r => r.kategori).filter(Boolean))].sort();
+  document.getElementById('fYear').innerHTML = '<option value="">Semua tahun</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+  if (years.length) document.getElementById('fYear').value = String(years[0]);
+  document.getElementById('fRegion').innerHTML = '<option value="">Semua region</option>' + regions.map(r => `<option value="${esc(r)}">${esc(r)}</option>`).join('');
+  document.getElementById('fKat').innerHTML = '<option value="">Semua kategori</option>' + kats.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
+}
+
+function refresh(){
+  const y = document.getElementById('fYear').value;
+  const rg = document.getElementById('fRegion').value;
+  const kt = document.getElementById('fKat').value;
+  FNY = RAW.filter(r => (!rg || r.region === rg) && (!kt || r.kategori === kt));
+  F = FNY.filter(r => !y || String(r.year) === y);
+  renderAll();
+}
+
+/* ───────── aggregations ───────── */
+function aggUsers(arr){
+  return [...groupBy(arr, r => r.key).values()].map(items => {
+    const latest = items.slice().sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''))[0];
+    return {
+      nama: latest.namaUser, spes: latest.spesialis, klinik: latest.namaKlinik, region: latest.region,
+      count: items.length, nominal: sum(items, r => r.nominal), avgSales: latest.averageSales
+    };
+  });
+}
+function aggBy(arr, keyFn){
+  return [...groupBy(arr, keyFn).entries()].map(([k, items]) => ({
+    k, count: items.length, nominal: sum(items, r => r.nominal),
+    users: new Set(items.map(r => r.key)).size
+  }));
+}
+function timeline(arr){
+  const m = new Map();
+  arr.forEach(r => {
+    if (!r.year || r.m < 0) return;
+    const k = r.year * 100 + r.m;
+    const o = m.get(k) || { k, year: r.year, m: r.m, count: 0, nominal: 0 };
+    o.count++; o.nominal += r.nominal; m.set(k, o);
+  });
+  return m;
+}
+
+/* ───────── render ───────── */
+function renderAll(){
+  renderKPI(); renderKat(); renderMiniTren(); renderMini();
+  renderUsers(); renderRegion(); renderWaktu(); renderInsight();
+}
+
+function renderKPI(){
+  const total = sum(F, r => r.nominal), n = F.length;
+  const users = new Set(F.map(r => r.key)).size;
+  const topReg = aggBy(F, r => r.region).sort((a,b) => b.nominal - a.nominal)[0];
+  document.getElementById('kpis').innerHTML = `
+    <div class="kpi main"><div class="l">Total nominal</div><div class="v">${rp(total)}</div></div>
+    <div class="kpi"><div class="l">Jumlah klaim</div><div class="v">${n.toLocaleString('id-ID')}</div></div>
+    <div class="kpi"><div class="l">Rata-rata per klaim</div><div class="v">${rp(n ? total/n : 0)}</div></div>
+    <div class="kpi"><div class="l">Dokter / user unik</div><div class="v">${users.toLocaleString('id-ID')}</div><div class="s">${users ? (n/users).toFixed(1).replace('.',',') + ' klaim per user' : ''}</div></div>
+    <div class="kpi"><div class="l">Region terbesar</div><div class="v" style="font-size:16px">${topReg ? esc(topReg.k) : '-'}</div><div class="s">${topReg ? rp(topReg.nominal) : ''}</div></div>`;
+}
+
+function renderKat(){
+  const a = aggBy(F, r => r.kategori || '(Tanpa kategori)').sort((x,y) => y.nominal - x.nominal);
+  mk('cKat', { type:'doughnut',
+    data:{ labels:a.map(x => x.k), datasets:[{ data:a.map(x => x.nominal), backgroundColor:PALETTE, borderWidth:2, borderColor:'#fff' }] },
+    options:{ maintainAspectRatio:false, plugins:{ legend:{ position:'bottom' },
+      tooltip:{ callbacks:{ label:c => ` ${c.label}: ${rp(c.parsed)} (${a[c.dataIndex].count} klaim)` } } } } });
+}
+
+function trendConfig(tl, labelFn){
+  return { data:{ labels: tl.map(labelFn), datasets:[
+      { type:'bar', label:'Nominal (Rp)', data: tl.map(x => x.nominal), backgroundColor:'rgba(13,148,136,.75)', borderRadius:6, yAxisID:'y' },
+      { type:'line', label:'Jumlah klaim', data: tl.map(x => x.count), borderColor:'#8b5cf6', backgroundColor:'#8b5cf6', tension:.3, yAxisID:'y1' } ] },
+    options:{ maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      scales:{ y:{ ticks:{ callback:v => short(v) }, grid:{ color:'#eef6f5' } },
+               y1:{ position:'right', grid:{ display:false }, ticks:{ precision:0 } } },
+      plugins:{ tooltip:{ callbacks:{ label:c => c.dataset.yAxisID === 'y' ? ' ' + rp(c.parsed.y) : ' ' + c.parsed.y + ' klaim' } } } } };
+}
+function sortedTimeline(arr){ return [...timeline(arr).values()].sort((a,b) => a.k - b.k); }
+function renderMiniTren(){ mk('cTrenMini', trendConfig(sortedTimeline(F), x => BS[x.m] + ' ' + String(x.year).slice(2))); }
+
+function miniTable(el, rows){
+  document.getElementById(el).innerHTML = rows.length
+    ? `<table class="t">${rows.join('')}</table>` : '<div class="empty">Belum ada data.</div>';
+}
+function renderMini(){
+  const u = aggUsers(F).sort((a,b) => b.nominal - a.nominal).slice(0,5);
+  miniTable('miniNominal', u.map(x => `<tr><td><b>${esc(x.nama)}</b><div class="sub">${esc(x.spes)} · ${esc(x.region)}</div></td><td class="num">${rp(x.nominal)}</td></tr>`));
+  const r = aggBy(F, x => x.region).sort((a,b) => b.nominal - a.nominal).slice(0,5);
+  miniTable('miniRegion', r.map(x => `<tr><td><b>${esc(x.k)}</b><div class="sub">${x.count} klaim · ${x.users} user</div></td><td class="num">${rp(x.nominal)}</td></tr>`));
+}
+
+/* ── user ranking ── */
+function rankHTML(list, valFn, fmtFn){
+  if (!list.length) return '<div class="empty">Belum ada data.</div>';
+  const max = Math.max(...list.map(valFn), 1);
+  return `<table class="t"><tr><th>#</th><th>Dokter / user</th><th></th><th class="num">Nilai</th></tr>` +
+    list.map((u,i) => `<tr><td>${i+1}</td>
+      <td><b>${esc(u.nama)}</b><div class="sub">${esc(u.spes)}${u.klinik ? ' · ' + esc(u.klinik) : ''} · ${esc(u.region)}</div></td>
+      <td class="bar-cell"><div class="bar" style="width:${valFn(u)/max*100}%"></div></td>
+      <td class="num">${fmtFn(u)}</td></tr>`).join('') + '</table>';
+}
+function renderUsers(){
+  const n = parseInt(document.getElementById('topN').value, 10);
+  const u = aggUsers(F);
+  document.getElementById('rankCount').innerHTML =
+    rankHTML(u.slice().sort((a,b) => b.count - a.count || b.nominal - a.nominal).slice(0,n), x => x.count, x => `<b>${x.count}×</b><div class="sub">${rp(x.nominal)}</div>`);
+  document.getElementById('rankNominal').innerHTML =
+    rankHTML(u.slice().sort((a,b) => b.nominal - a.nominal).slice(0,n), x => x.nominal, x => `<b>${rp(x.nominal)}</b><div class="sub">${x.count} klaim</div>`);
+}
+
+/* ── region ── */
+function simpleAggTable(arr, keyFn, firstLabel){
+  const a = aggBy(arr, keyFn).sort((x,y) => y.nominal - x.nominal);
+  if (!a.length) return '<div class="empty">Belum ada data.</div>';
+  const tn = sum(a, x => x.nominal), tc = sum(a, x => x.count);
+  return `<table class="t"><tr><th>${firstLabel}</th><th class="num">Klaim</th><th class="num">User</th><th class="num">Total nominal</th><th class="num">Rata-rata/klaim</th><th class="num">Porsi</th></tr>` +
+    a.map(x => `<tr><td><b>${esc(x.k || '-')}</b></td><td class="num">${x.count}</td><td class="num">${x.users}</td><td class="num">${rp(x.nominal)}</td><td class="num">${rp(x.nominal/x.count)}</td><td class="num">${tn ? (x.nominal/tn*100).toFixed(1).replace('.',',') : 0}%</td></tr>`).join('') +
+    `<tr class="total"><td>Total</td><td class="num">${tc}</td><td class="num"></td><td class="num">${rp(tn)}</td><td class="num">${rp(tc ? tn/tc : 0)}</td><td class="num">100%</td></tr></table>`;
+}
+function renderRegion(){
+  const a = aggBy(F, r => r.region).sort((x,y) => y.nominal - x.nominal);
+  mk('cRegion', { type:'bar',
+    data:{ labels:a.map(x => x.k), datasets:[{ label:'Total nominal', data:a.map(x => x.nominal), backgroundColor:'rgba(13,148,136,.8)', borderRadius:6 }] },
+    options:{ indexAxis:'y', maintainAspectRatio:false, plugins:{ legend:{ display:false },
+      tooltip:{ callbacks:{ label:c => ` ${rp(c.parsed.x)} · ${a[c.dataIndex].count} klaim` } } },
+      scales:{ x:{ ticks:{ callback:v => short(v) }, grid:{ color:'#eef6f5' } } } } });
+  document.getElementById('regionTable').innerHTML = simpleAggTable(F, r => r.region, 'Region');
+  document.getElementById('districtTable').innerHTML = simpleAggTable(F, r => r.districtArea, 'District / area');
+}
+
+/* ── waktu ── */
+function deltaCell(cur, prev, isMoney){
+  if (prev === undefined) return '<td class="num flat">-</td><td class="num flat">-</td>';
+  const d = cur - prev, p = pct(cur, prev);
+  const cls = d > 0 ? 'up' : d < 0 ? 'down' : 'flat';
+  const arrow = d > 0 ? '▲' : d < 0 ? '▼' : '=';
+  const dTxt = isMoney ? (d >= 0 ? '+' : '−') + rp(Math.abs(d)) : (d >= 0 ? '+' : '−') + Math.abs(d);
+  return `<td class="num ${cls}">${dTxt}</td><td class="num ${cls}">${p === null ? '-' : arrow + ' ' + Math.abs(p).toFixed(1).replace('.',',') + '%'}</td>`;
+}
+function renderWaktu(){
+  const tl = sortedTimeline(F);
+  mk('cTren', trendConfig(tl, x => BS[x.m] + ' ' + x.year));
+
+  // MoM: bandingkan dengan bulan kalender sebelumnya (dari seluruh data region+kategori, supaya Januari tetap punya pembanding Desember)
+  const all = timeline(FNY);
+  document.getElementById('momTable').innerHTML = !tl.length ? '<div class="empty">Belum ada data.</div>' :
+    `<table class="t"><tr><th>Bulan</th><th class="num">Klaim</th><th class="num">Δ klaim</th><th class="num">Total nominal</th><th class="num">Δ nominal</th><th class="num">Δ %</th></tr>` +
+    tl.slice().reverse().map(x => {
+      const prevK = x.m === 0 ? (x.year-1)*100 + 11 : x.k - 1;
+      const p = all.get(prevK);
+      const cDelta = p ? (x.count - p.count) : undefined;
+      const cCls = cDelta > 0 ? 'up' : cDelta < 0 ? 'down' : 'flat';
+      return `<tr><td><b>${BULAN[x.m]} ${x.year}</b></td><td class="num">${x.count}</td>
+        <td class="num ${p ? cCls : 'flat'}">${p ? (cDelta >= 0 ? '+' : '−') + Math.abs(cDelta) : '-'}</td>
+        <td class="num">${rp(x.nominal)}</td>${deltaCell(x.nominal, p ? p.nominal : undefined, true)}</tr>`;
+    }).join('') + '</table>';
+
+  // YoY overlay
+  const yrs = [...new Set(FNY.map(r => r.year).filter(Boolean))].sort();
+  const byYear = y => BS.map((_, i) => sum(FNY.filter(r => r.year === y && r.m === i), r => r.nominal));
+  mk('cYoY', { type:'line',
+    data:{ labels: BS, datasets: yrs.map((y,i) => ({ label:String(y), data:byYear(y), borderColor:PALETTE[i % PALETTE.length], backgroundColor:PALETTE[i % PALETTE.length], tension:.3 })) },
+    options:{ maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      scales:{ y:{ ticks:{ callback:v => short(v) }, grid:{ color:'#eef6f5' } } },
+      plugins:{ tooltip:{ callbacks:{ label:c => ` ${c.dataset.label}: ${rp(c.parsed.y)}` } } } } });
+
+  // Tahunan
+  const ya = aggBy(FNY.filter(r => r.year), r => r.year).sort((a,b) => a.k - b.k);
+  document.getElementById('yearTable').innerHTML = !ya.length ? '<div class="empty">Belum ada data.</div>' :
+    `<table class="t"><tr><th>Tahun</th><th class="num">Klaim</th><th class="num">User</th><th class="num">Total nominal</th><th class="num">Rata-rata/klaim</th><th class="num">Δ nominal vs tahun lalu</th></tr>` +
+    ya.map((x,i) => {
+      const p = ya[i-1]; const g = p ? pct(x.nominal, p.nominal) : null;
+      const cls = g > 0 ? 'up' : g < 0 ? 'down' : 'flat';
+      return `<tr><td><b>${x.k}</b></td><td class="num">${x.count}</td><td class="num">${x.users}</td><td class="num">${rp(x.nominal)}</td><td class="num">${rp(x.nominal/x.count)}</td>
+        <td class="num ${cls}">${g === null ? '-' : (g > 0 ? '▲ ' : g < 0 ? '▼ ' : '') + Math.abs(g).toFixed(1).replace('.',',') + '%'}</td></tr>`;
+    }).join('') + '</table>';
+}
+
+/* ── insight ── */
+function renderRatio(){
+  const min = parseFloat(document.getElementById('ratioMin').value) || 0;
+  const rows = aggUsers(F).filter(u => u.avgSales > 0).map(u => ({ ...u, ratio: u.nominal / u.avgSales * 100 }))
+    .filter(u => u.ratio >= min).sort((a,b) => b.ratio - a.ratio).slice(0, 50);
+  document.getElementById('ratioTable').innerHTML = !rows.length ? '<div class="empty">Tidak ada user yang melewati batas ini.</div>' :
+    `<table class="t"><tr><th>Dokter / user</th><th class="num">Total entertain</th><th class="num">Average sales/bulan</th><th class="num">Rasio</th></tr>` +
+    rows.map(u => `<tr><td><b>${esc(u.nama)}</b><div class="sub">${esc(u.spes)} · ${esc(u.region)} · ${u.count} klaim</div></td><td class="num">${rp(u.nominal)}</td><td class="num">${rp(u.avgSales)}</td><td class="num"><span class="pill">${u.ratio.toFixed(1).replace('.',',')}%</span></td></tr>`).join('') + '</table>';
+}
+function renderOutliers(){
+  const out = [];
+  groupBy(F, r => r.kategori).forEach((items, kat) => {
+    if (items.length < 5) return;
+    const mean = sum(items, r => r.nominal) / items.length;
+    const sd = Math.sqrt(sum(items, r => (r.nominal - mean) ** 2) / items.length);
+    items.forEach(r => { if (r.nominal > mean + 2 * sd) out.push({ ...r, mean }); });
+  });
+  out.sort((a,b) => b.nominal - a.nominal);
+  document.getElementById('outlierTable').innerHTML = !out.length ? '<div class="empty">Tidak ada klaim yang menonjol.</div>' :
+    `<table class="t"><tr><th>Tanggal</th><th>User</th><th>Kategori</th><th>Tempat</th><th class="num">Nominal</th><th class="num">Rata-rata kategori</th></tr>` +
+    out.slice(0,50).map(r => `<tr><td>${esc(r.tanggal)}</td><td><b>${esc(r.namaUser)}</b><div class="sub">${esc(r.region)}</div></td><td>${esc(r.kategori)}</td><td>${esc(r.tempat)}</td><td class="num">${rp(r.nominal)}</td><td class="num">${rp(r.mean)}</td></tr>`).join('') + '</table>';
+}
+function renderDups(){
+  const g = groupBy(F, r => [r.key, r.tanggal, r.kategori, r.nominal].join('|'));
+  const d = [...g.values()].filter(x => x.length > 1);
+  document.getElementById('dupTable').innerHTML = !d.length ? '<div class="empty">Tidak ditemukan klaim ganda.</div>' :
+    `<table class="t"><tr><th>Tanggal</th><th>User</th><th>Kategori</th><th class="num">Nominal</th><th class="num">Muncul</th><th>Pengisi</th></tr>` +
+    d.map(x => `<tr><td>${esc(x[0].tanggal)}</td><td><b>${esc(x[0].namaUser)}</b></td><td>${esc(x[0].kategori)}</td><td class="num">${rp(x[0].nominal)}</td><td class="num"><span class="pill">${x.length}×</span></td><td>${esc([...new Set(x.map(r => r.namaPengisi || '-'))].join(', '))}</td></tr>`).join('') + '</table>';
+}
+function renderInsight(){
+  renderRatio(); renderOutliers(); renderDups();
+  document.getElementById('spesTable').innerHTML = simpleAggTable(F, r => r.spesialis, 'Spesialis');
+  document.getElementById('pengisiTable').innerHTML = simpleAggTable(F, r => r.namaPengisi || '(Tidak tercatat)', 'Pengisi');
+}
+
+/* ───────── tabs & export ───────── */
+document.getElementById('tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab-btn'); if (!b) return;
+  document.querySelectorAll('.tab-btn').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x.id === b.dataset.tab));
+  Object.values(charts).forEach(c => c.resize());
+});
+
+function exportData(){
+  if (!F.length) { toast('Tidak ada data untuk diexport'); return; }
+  const rows = F.map(r => ({ Tanggal:r.tanggal, Bulan:r.bulan, Tahun:r.year, Region:r.region, 'District/Area':r.districtArea,
+    'Nama User':r.namaUser, 'ID User':r.idUser, Spesialis:r.spesialis, Klinik:r.namaKlinik, Kategori:r.kategori,
+    Tempat:r.tempat, Nominal:r.nominal, 'Average Sales':r.averageSales, Pengisi:r.namaPengisi }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Data Klaim');
+  XLSX.writeFile(wb, 'Data_Klaim_Entertain.xlsx');
+}
+</script>
+</body>
+</html>
