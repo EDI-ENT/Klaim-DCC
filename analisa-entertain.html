@@ -200,7 +200,14 @@
 
     <!-- INSIGHT -->
     <div class="tab" id="t-insight">
-      <div class="card"><h3>Rasio entertain terhadap average sales</h3>
+      <div class="card"><h3>Entertain vs sales asli</h3>
+  <div class="hint">Total entertain dibagi total sales user yang sama pada tahun yang dipilih. Rasio tinggi berarti biaya entertain besar dibanding sales nyata.</div>
+  <div class="chart-box"><canvas id="cSalesEnt"></canvas></div>
+  <div class="inline-ctl" style="margin-top:12px">Tampilkan user dengan rasio minimal
+    <input type="number" id="realMin" value="0" min="0" step="1" oninput="renderReal()"> %</div>
+  <div class="scroll" id="realTable"></div>
+</div>
+         <div class="card"><h3>Rasio entertain terhadap average sales</h3>
         <div class="hint">Total nominal entertain user dibagi average sales per bulan (data klaim terbaru user). Rasio tinggi berarti biaya entertain besar dibanding kontribusi sales, jadi layak ditinjau.</div>
         <div class="inline-ctl">Tampilkan user dengan rasio minimal <input type="number" id="ratioMin" value="10" min="0" step="1" oninput="renderRatio()"> %</div>
         <div class="scroll" id="ratioTable"></div></div>
@@ -226,6 +233,7 @@ const BS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','D
 const PALETTE = ['#0d9488','#8b5cf6','#2dd4bf','#f59e0b','#ef4444','#3b82f6','#ec4899','#84cc16'];
 
 let RAW = [];   // semua klaim
+let SALES = [];
 let F   = [];   // terfilter (tahun + region + kategori)
 let FNY = [];   // terfilter tanpa tahun (region + kategori)
 let email = '';
@@ -297,29 +305,31 @@ function showLoadError(msg){
 
 async function loadData(){
   try {
-    const res = await fetch(API_URL + '?action=getAnalytics&email=' + encodeURIComponent(email));
-    const d = await res.json();
+    const q = '&email=' + encodeURIComponent(email);
+    const [d, s] = await Promise.all([
+      fetch(API_URL + '?action=getAnalytics' + q).then(r => r.json()),
+      fetch(API_URL + '?action=getSales' + q).then(r => r.json()).catch(() => [])
+    ]);
+    if (d && d.error) return showLoadError(d.error);
+    if (!Array.isArray(d)) return showLoadError('Format data dari server tidak dikenali.');
+    if (!d.length) return showLoadError('Sheet "Klaim" belum berisi data.');
 
-    if (d && d.error)       return showLoadError(d.error === 'Action tidak dikenali'
-        ? 'Apps Script belum di-deploy dengan action getAnalytics (deploy "New version").' : d.error);
-    if (!Array.isArray(d))  return showLoadError('Format data dari server tidak dikenali.');
-    if (!d.length)          return showLoadError('Sheet "Klaim" belum berisi data.');
-
-    const bulanLower = BULAN.map(b => b.toLowerCase());
+    const bl = BULAN.map(b => b.toLowerCase());
     RAW = d.map(r => {
       const t = parseTanggal(r.tanggal);
-      const idx = bulanLower.indexOf(String(r.bulan || '').trim().toLowerCase());
-      return { ...r,
-        year: t ? t.y : null,
-        m: idx >= 0 ? idx : (t ? t.mo : -1),
-        key: r.idUser || r.namaUser };
+      const idx = bl.indexOf(String(r.bulan || '').trim().toLowerCase());
+      return { ...r, year: t ? t.y : null, m: idx >= 0 ? idx : (t ? t.mo : -1), key: r.idUser || r.namaUser };
     });
+    SALES = Array.isArray(s)
+      ? s.map(r => ({ key: r.idUser, year: r.year, m: r.m, sales: r.sales }))
+         .filter(r => r.key && r.year && r.m >= 0)
+      : [];
 
     document.getElementById('loading').style.display = 'none';
     buildFilters();
     refresh();
   } catch(e) {
-    showLoadError('Gagal memuat data: ' + e.message + '. Cek koneksi dan deployment Apps Script.');
+    showLoadError('Gagal memuat data: ' + e.message);
   }
 }
 function buildFilters(){
@@ -343,6 +353,11 @@ function refresh(){
 
 /* ───────── aggregations ───────── */
 function aggUsers(arr){
+      return {
+      key: latest.key,
+      nama: latest.namaUser, spes: latest.spesialis, klinik: latest.namaKlinik, region: latest.region,
+      count: items.length, nominal: sum(items, r => r.nominal), avgSales: latest.averageSales
+    };
   return [...groupBy(arr, r => r.key).values()].map(items => {
     const latest = items.slice().sort((a,b) => (b.tanggal||'').localeCompare(a.tanggal||''))[0];
     return {
@@ -555,6 +570,48 @@ function exportData(){
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), 'Data Klaim');
   XLSX.writeFile(wb, 'Data_Klaim_Entertain.xlsx');
+}
+  function renderReal(){
+  const y = document.getElementById('fYear').value;
+  const min = parseFloat(document.getElementById('realMin').value) || 0;
+  const users = aggUsers(F);
+  const keys = new Set(users.map(u => u.key));
+  const S = SALES.filter(r => keys.has(r.key) && (!y || String(r.year) === y));
+
+  const salesBy = new Map();
+  S.forEach(r => salesBy.set(r.key, (salesBy.get(r.key) || 0) + r.sales));
+  const rows = users.map(u => {
+    const s = salesBy.get(u.key) || 0;
+    return { ...u, sales: s, ratio: s ? u.nominal / s * 100 : null };
+  }).filter(u => u.ratio === null || u.ratio >= min)
+    .sort((a,b) => (b.ratio ?? 1e9) - (a.ratio ?? 1e9)).slice(0, 50);
+
+  document.getElementById('realTable').innerHTML = !rows.length
+    ? '<div class="empty">Tidak ada data.</div>'
+    : `<table class="t"><tr><th>Dokter / user</th><th class="num">Entertain</th><th class="num">Sales</th><th class="num">Rasio</th></tr>` +
+      rows.map(u => `<tr><td><b>${esc(u.nama)}</b><div class="sub">${esc(u.spes)} · ${esc(u.region)} · ${u.count} klaim</div></td>
+        <td class="num">${rp(u.nominal)}</td>
+        <td class="num">${u.sales ? rp(u.sales) : '<span class="flat">belum ada data sales</span>'}</td>
+        <td class="num">${u.ratio === null ? '-' : `<span class="pill">${u.ratio.toFixed(1).replace('.',',')}%</span>`}</td></tr>`).join('') + '</table>';
+
+  const ent = timeline(F);
+  const sal = new Map();
+  S.forEach(r => { const k = r.year * 100 + r.m; sal.set(k, (sal.get(k) || 0) + r.sales); });
+  const ks = [...new Set([...ent.keys(), ...sal.keys()])].sort((a,b) => a - b);
+  mk('cSalesEnt', { data:{ labels: ks.map(k => BS[k % 100] + ' ' + String(Math.floor(k/100)).slice(2)),
+    datasets:[
+      { type:'bar', label:'Entertain', data: ks.map(k => (ent.get(k) || {}).nominal || 0), backgroundColor:'rgba(13,148,136,.75)', yAxisID:'y' },
+      { type:'bar', label:'Sales', data: ks.map(k => sal.get(k) || 0), backgroundColor:'rgba(139,92,246,.35)', yAxisID:'y2' },
+      { type:'line', label:'Rasio (%)', data: ks.map(k => sal.get(k) ? ((ent.get(k) || {}).nominal || 0) / sal.get(k) * 100 : null), borderColor:'#ef4444', yAxisID:'y1', tension:.3 } ] },
+    options:{ maintainAspectRatio:false, interaction:{ mode:'index', intersect:false },
+      scales:{ y:{ ticks:{ callback:v => short(v) } },
+               y2:{ display:false },
+               y1:{ position:'right', grid:{ display:false }, ticks:{ callback:v => v + '%' } } } } });
+}
+  function renderInsight(){
+  renderReal(); renderRatio(); renderOutliers(); renderDups();
+  document.getElementById('spesTable').innerHTML = simpleAggTable(F, r => r.spesialis, 'Spesialis');
+  document.getElementById('pengisiTable').innerHTML = simpleAggTable(F, r => r.namaPengisi || '(Tidak tercatat)', 'Pengisi');
 }
 </script>
 </body>
