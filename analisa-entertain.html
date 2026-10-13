@@ -362,6 +362,22 @@ function aggUsers(arr){
     };
   });
 }
+  function aggBy(arr, keyFn){
+  return [...groupBy(arr, keyFn).entries()].map(([k, items]) => ({
+    k, count: items.length, nominal: sum(items, r => r.nominal),
+    users: new Set(items.map(r => r.key)).size
+  }));
+}
+function timeline(arr){
+  const m = new Map();
+  arr.forEach(r => {
+    if (!r.year || r.m < 0) return;
+    const k = r.year * 100 + r.m;
+    const o = m.get(k) || { k, year: r.year, m: r.m, count: 0, nominal: 0 };
+    o.count++; o.nominal += r.nominal; m.set(k, o);
+  });
+  return m;
+}
 /* ───────── render ───────── */
 function renderAll(){
   renderKPI(); renderKat(); renderMiniTren(); renderMini();
